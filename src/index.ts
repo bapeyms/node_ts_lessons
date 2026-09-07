@@ -51,22 +51,24 @@
 import * as fs from "node:fs" // підключення модуля файлової системи
 import path from "node:path"  // модуль для роботи зі шляхами
 import process from "node:process"
-import {stdout, stdin} from "node:process"
+import {stdout, stdin} from "node:process" // ввід-вивід
 
 const FILE_TO_PATH = path.join('logs', 'logs.txt');
 // fs.writeFileSync(FILE_TO_PATH, "Node");
 // fs.writeFile(FILE_TO_PATH, "Node", () => {
-//     console.log("Success!");
-// })
+//     console.log("Success!"); // переписує файл і записує Node
+// }) 
 
+// async означає асинхронну роботу та дозволяє використовувати await
+// await означає, що треба дочекатися, поки Promise завершиться і тільки після цього можна продовжити виконання async функції
 async function writeToFile(filePath:string, content:string):Promise<void>{
     try{
-        await fs.appendFile(filePath, content+'\n', 'utf-8')
+        await fs.appendFile(filePath, content+'\n', 'utf-8') // додає текст в кінець файлу
         // await fs.writeFile(filePath, content+'\n', 'utf-8')
         stdout.write("Файл успішно збережено")
     }
     catch(error){
-        console.log("Файл не збережено")
+        console.error("Файл не збережено")
     }
 }
 
@@ -75,6 +77,6 @@ stdin.on('data', (data:Buffer) => {
     const content:string = data.toString('utf-8');
     console.log("Content", content);
     writeToFile(FILE_TO_PATH, content).then(_=> {
-        
+
     })
 })
