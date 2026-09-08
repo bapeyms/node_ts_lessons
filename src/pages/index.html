@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaTech — IT-компанія</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #172554;
+            color: white;
+            padding: 20px 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 24px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .hero {
+            background: #2563eb;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .hero h2 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .button {
+            display: inline-block;
+            background: white;
+            color: #2563eb;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .section {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .section h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #172554;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 280px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h3 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .about {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        footer {
+            background: #172554;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>NovaTech</h1>
+
+        <nav>
+            <a href="/about">Про нас</a>
+            <a href="#services">Послуги</a>
+            <a href="#contact">Контакти</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h2>Створюємо технології майбутнього</h2>
+        <p>NovaTech допомагає компаніям розвивати бізнес за допомогою сучасних IT-рішень.</p>
+        <a href="#contact" class="button">Зв'язатися з нами</a>
+    </section>
+
+    <section class="section" id="about">
+        <h2>Про компанію</h2>
+
+        <div class="about">
+            <p>
+                NovaTech — сучасна IT-компанія, яка займається розробкою
+                вебсайтів, програмного забезпечення та цифрових рішень
+                для малого й середнього бізнесу.
+            </p>
+        </div>
+    </section>
+
+    <section class="section" id="services">
+        <h2>Наші послуги</h2>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Веброзробка</h3>
+                <p>Створюємо швидкі та зручні вебсайти для вашого бізнесу.</p>
+            </div>
+
+            <div class="card">
+                <h3>IT-рішення</h3>
+                <p>Розробляємо програмне забезпечення відповідно до ваших потреб.</p>
+            </div>
+
+            <div class="card">
+                <h3>Підтримка</h3>
+                <p>Допомагаємо підтримувати та розвивати готові проєкти.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="section" id="contact">
+        <h2>Контакти</h2>
+
+        <div class="about">
+            <p>Email: info@novatech.example</p>
+            <p>Телефон: +380 00 123 45 67</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 NovaTech. Усі права захищені.</p>
+    </footer>
+
+</body>
+</html>
+```
