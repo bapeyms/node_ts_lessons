@@ -11,7 +11,16 @@ body
 */
 const server = http.createServer((req,res)=>{
     const PATH_TO_PAGES = path.join("src", "pages");
-    if(req.method==="GET" && req.url === '/') {
+    console.log(req.url, path.extname(req.url as string));
+
+    if(req.method==="GET" && path.extname(req.url as string)  === '.css') {
+        const PATH_TO_CSS = path.join("src", req.url as string);
+        const content = fs.readFileSync(PATH_TO_CSS);
+        res.setHeader("Content-Type", "text/css; charset=utf-8")
+        
+        res.write(content);
+    }
+    else if(req.method==="GET" && req.url === '/') {
         const PATH_TO_INDEX_PAGE = path.join(PATH_TO_PAGES, "index.html");
         const content = fs.readFileSync(PATH_TO_INDEX_PAGE);
         res.setHeader("Content-Type", "text/html; charset=utf-8")
