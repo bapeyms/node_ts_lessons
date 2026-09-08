@@ -81,6 +81,7 @@ public static async readFile(filePath:string) {
         console.error(`ERROR: ${error}`);
     }
 }
+
 }
 
 
