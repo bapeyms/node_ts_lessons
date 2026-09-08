@@ -9,15 +9,15 @@
 import  * as fs from "node:fs/promises"
 import path from "node:path"
 import FileWorker from "./funcs.js"
+
 const FOLDER_NAME = './logs';
 
 try {
-    await fs.mkdir(FOLDER_NAME);
-    await fs.access(FOLDER_NAME);
-    console.log(`Folder ${FOLDER_NAME} is created/ already exists!`)
+    await fs.mkdir(FOLDER_NAME, {recursive: true});
+    console.log(`Folder ${FOLDER_NAME} is created or already exists!`)
 }
 catch(error) {
-    console.log(`ERROR! ${error}`);
+    console.log("Error creating folder: ", error);
 }
 const FILE_TO_PATH = path.join(FOLDER_NAME,'logs.txt')
 
