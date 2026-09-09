@@ -2,10 +2,6 @@
 // import {getContent, writeToFile} from "./funcs.js"
 // const FILE_TO_PATH = path.join('logs', 'logs.txt');
 
-
-// const content = await getContent();
-// await writeToFile(FILE_TO_PATH, content);
-
 import  * as fs from "node:fs/promises"
 import path from "node:path"
 import FileWorker from "./funcs.js"

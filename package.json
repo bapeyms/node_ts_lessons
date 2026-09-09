@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx tsx ./src/index.ts",
-    "server": "npx tsx ./src/server.ts",
+    "server": "npx tsx watch ./src/server.ts",
     "build": "tsc"
   },
   "keywords": [],
