@@ -5,3 +5,8 @@ GET http://localhost:4200
 POST http://localhost:4200
 content-type: application/json;
 
+{
+    "title": "test book",
+    "price": 2000,
+    "isActive": true
+}

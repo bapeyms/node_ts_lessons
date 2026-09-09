@@ -11,6 +11,6 @@ export const showBooks:showBooksType = (book)=>{
  
   <span class="book-status active">${book.isActive?"В наявності":"Немає"}</span>
  
-  <button class="book-button">Купити</button>
+  <a href="/book?id=${book.id}" class="book-button">Купити</a>
 </div>`
 }
