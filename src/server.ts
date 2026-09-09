@@ -1,7 +1,7 @@
-import http from "node:http"
+import http from "node:http" // модуль для створення сервера
 import fs from "node:fs"
 import path from "node:path"
-import {URL} from "node:url"
+import {URL} from "node:url" // кдас для роботи з URL
 
 import {books} from "./data/books.js"
 import {showBooks} from "./utilis/showBooks.js"
@@ -9,23 +9,33 @@ import { BookType } from "./types/BookType.js"
 
 const PORT:number = 4200
  
-const server = http.createServer((req,res) => {
+// createServer - створення серверу
+// (req, res) => {} - ф-ція, що буде виконуватися кожного разу, коли клієнт роьитиме http-запит
+const server = http.createServer((req,res) => { 
+    // візьми req.url, а якщо його немає - візьми /
+    // ?? - оператор нульового злиття. повертає праве значння лише якщо ліве значення дорівнює null/underfined. у іншому випадку він повертає ліве значення
     const url = new URL(req.url ?? "/", `http://${req.headers.host}`)
     console.log(url);
-    // ?? - оператор нульового злиття. повертає праве значння лише якщо ліве значення дорівнює null/underfined. у іншому випадку він повертає ліве значення
+    
+    // створення шляху з правильними розділювачами
     const PATH_TO_PAGES = path.join("src", "pages");
 
+    // якщо запрос GET та url -> books
     if (req.method === "GET" && req.url === '/books') {
-        let books_content: string = "<html><head><link rel=\"stylesheet\" href=\"book.css\"></head><body><div class=\"container\">";
+        let books_content: string = 
+        "<html><head><link rel=\"stylesheet\" href=\"book.css\"></head><body><div class=\"container\">";
+        
         books.forEach((book) => {
             books_content += showBooks(book);
         });
         books_content += `</div></body></html>`;
 
+        // відправка HTML
         res.setHeader("Content-Type", "text/html; charset=utf-8");
         res.end(books_content);
-        return;
+        return; //зупиняє callback, тобто сервер не піде перевіряти наступні if
     }
+
     else if (req.method === "GET" && url.pathname === '/book') {
         const idParam = url.searchParams.get("id");
 
