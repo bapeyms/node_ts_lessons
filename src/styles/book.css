@@ -15,7 +15,9 @@
   flex-direction: column;
   gap: 12px;
 }
- 
+ .book-card>a {
+  text-decoration: none;
+ }
 .book-title {
   margin: 0;
   font-size: 22px;
