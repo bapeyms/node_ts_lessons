@@ -134,62 +134,88 @@ const server = http.createServer((req,res) => {
             body += chunk;
         });
         req.on("end", () => {
-            const data = new URLSearchParams(body);
-
-            const title = data.get("title"); 
-            const price = data.get("price"); 
-            const isActive = data.get("isActive");
-
-            const newBook: BookType = { 
-                id: books.length + 1, 
-                title: title ?? "", 
-                price: Number(price), 
-                isActive: isActive === "true" 
-            };
-            books.push(newBook);
-            res.setHeader("Content-Type", "text/html; charset=utf-8");
-            res.end(` <html> 
-                        <head><link rel="stylesheet" href="/styles/book.css"> </head>
-                            <body> 
-                                <div class="container"> 
-                                    <h1>Книгу успішно додано!</h1> 
-                                    ${showBooks(newBook)}  
-                                    <a href="/books">Повернутися до книг</a>
-                                </div>
-                            </body>
-                        </html> `);
+            try {
+                const parsedData = JSON.parse(body);
+                
+                const newBook: BookType = { 
+                    id: books.length + 1, 
+                    title: parsedData.title ?? "", 
+                    price: Number(parsedData.price), 
+                    isActive: Boolean(parsedData.isActive)
+                };
+                books.push(newBook);
+                
+                res.statusCode = 201;
+                res.setHeader("Content-Type", "application/json; charset=utf-8");
+                res.end(JSON.stringify({ 
+                    message: "Book is added!", 
+                    book: newBook }));} 
+            catch (error) {
+                res.statusCode = 400;
+                res.setHeader("Content-Type", "application/json; charset=utf-8");
+                res.end(JSON.stringify({ message: "Invalid JSON" }));
+                }
             });
         return;
     }
     else if (req.method === "GET" && req.url === "/add-book") { 
-        const htmlResponse = `<html> 
-                                <head> 
-                                    <link rel="stylesheet" href="/styles/book.css">
-                                </head>
-                                <body> 
-                                    <div class="container">
-                                        <div class="book-card"> 
-                                            <h1 class="book-title"> Add a new book </h1>
-                                            <form action="/books" method="POST"> 
-                                            <label> Book title: </label>
-                                            <input type="text" name="title" required > 
-                                            <label> Price: </label> 
-                                            <input type="number" name="price" required >   
-                                            <label> Active: </label> 
-                                            <select name="isActive"> 
-                                                <option value="true">Yes</option> 
-                                                <option value="false">No</option> 
-                                            </select>  
-                                            <button type="submit" class="book-button"> Add book </button>   
-                                             </form>
-                                        </div> 
-                                    </div>
-                                </body>
-                        </html> `; 
-        res.setHeader("Content-Type", "text/html; charset=utf-8"); 
-        res.end(htmlResponse); 
-        return; 
-    }
+    const htmlResponse = `<html> 
+        <head> 
+            <link rel="stylesheet" href="/book.css">
+        </head>
+        <body> 
+            <div class="container">
+                <div class="book-card"> 
+                    <h1 class="book-title">Add a new book</h1>
+                    <form id="addBookForm"> 
+                        <label>Book title:</label>
+                        <input type="text" id="title" name="title" required> 
+
+                        <label>Price:</label> 
+                        <input type="number" id="price" name="price" required>   
+
+                        <label>Active:</label> 
+                        <select id="isActive" name="isActive"> 
+                            <option value="true">Yes</option> 
+                            <option value="false">No</option> 
+                        </select>  
+
+                        <button type="submit" class="book-button">Add book</button>   
+                    </form>
+                </div> 
+            </div>
+
+            <script>
+                document.getElementById('addBookForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const bookData = {
+                        title: document.getElementById('title').value,
+                        price: Number(document.getElementById('price').value),
+                        isActive: document.getElementById('isActive').value === 'true'
+                    };
+
+                    const response = await fetch('/books', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bookData)
+                    });
+
+                    if (response.ok) {
+                        alert('Book is added!');
+                        window.location.href = '/books';
+                    } else {
+                        alert('Error adding the book');
+                    }
+                });
+            </script>
+        </body>
+    </html>`; 
+    
+    res.setHeader("Content-Type", "text/html; charset=utf-8"); 
+    res.end(htmlResponse); 
+    return; 
+}
     
     if (req.method === "GET") {
         const pageName = req.url === "/" ? "index.html" : `${req.url}.html`;
