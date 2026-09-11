@@ -1,13 +1,15 @@
 import http from "node:http" // модуль для створення сервера
 import fs from "node:fs"
 import path from "node:path"
-import {URL} from "node:url" // кдас для роботи з URL
+import {URL} from "node:url" // клас для роботи з URL
+import 'dotenv/config'
+import dorenv from "dotenv"
 
 import {books} from "./data/books.js"
 import {showBooks} from "./utilis/showBooks.js"
 import { BookType } from "./types/BookType.js"
 
-const PORT:number = 4200
+const config = dorenv.config() // зчитування .env файлу
  
 // createServer - створення серверу
 // (req, res) => {} - ф-ція, що буде виконуватися кожного разу, коли клієнт роьитиме http-запит
@@ -128,6 +130,7 @@ const server = http.createServer((req,res) => {
     res.end("404 Not Found");
 });
 
-server.listen(PORT,()=>{
-    console.log(`Server http://localhost:${PORT} has been started...`)
+server.listen(process.env.PORT,()=>{
+    console.log(`Server http://localhost:${process.env.HOST} has been started...`)
+    console.log(`Server name: ${process.env.SERVER_NAME}`);
 })
