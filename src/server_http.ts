@@ -10,6 +10,17 @@ import { BookType } from "./types/BookType.js"
  
 dorenv.config() // завантаження змінних середовища з .env файлу
 
+// словник для визначення типу контенту для зображень
+// Record<string, string> - тип даних, який описує об'єкт, де ключі є рядками, а значення також рядками
+const PHOTO_TYPES: Record<string, string> = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+    ".svg": "image/svg+xml"
+};
+
 // createServer - створення серверу
 // (req, res) => {} - ф-ція, що буде виконуватися кожного разу, коли клієнт роьитиме http-запит
 const server = http.createServer((req,res) => { 
@@ -36,7 +47,6 @@ const server = http.createServer((req,res) => {
         res.end(books_content);
         return; //зупиняє callback, тобто сервер не піде перевіряти наступні if
     }
-
     else if (req.method === "GET" && url.pathname === '/book') {
         const idParam = url.searchParams.get("id");
 
@@ -45,7 +55,6 @@ const server = http.createServer((req,res) => {
             const book: BookType | undefined = books.find(book => book.id === id);
 
             if (book !== undefined) {
-                // Огортаємо в повноцінну HTML-структуру, щоб підключилися стилі
                 const htmlResponse = `
                     <html>
                         <head>
@@ -60,14 +69,14 @@ const server = http.createServer((req,res) => {
                 `;
                 res.setHeader("Content-Type", "text/html; charset=utf-8");
                 res.end(htmlResponse);
-                return; // ОБОВ'ЯЗКОВО зупиняємо виконання!
-            } else {
+                return;
+            } 
+            else {
                 res.statusCode = 404;
                 res.end("Книгу не знайдено");
                 return;
             }
         }
-
         res.statusCode = 400;
         res.end("Не вказано id книги");
         return;
@@ -78,11 +87,17 @@ const server = http.createServer((req,res) => {
     
     // відображення картинок
     if (req.method === "GET" && req.url?.startsWith("/images/")) {
-        const imageName = req.url.substring("/images/".length);
-        const PATH_TO_IMAGE = path.join("src", "images", imageName);
+
+        const imageName = req.url.substring("/images/".length); // вирізання частини /images/ для отримання чистої назви файлу
+        // path.normalize - нормалізація шляху, щоб уникнути проблем з різними ОС
+        const PATH_TO_IMAGE = path.normalize(path.join("src", "images", imageName));
+        
+        const ext = path.extname(PATH_TO_IMAGE).toLowerCase();
+        const contentType = PHOTO_TYPES[ext] || "application/octet-stream"; // визначення типу контенту для зображення
+        
         if (fs.existsSync(PATH_TO_IMAGE)) {
             const content = fs.readFileSync(PATH_TO_IMAGE);
-            res.setHeader("Content-Type", "image/jpeg");
+            res.setHeader("Content-Type", contentType);
             res.end(content);
         } 
         else {
@@ -93,7 +108,6 @@ const server = http.createServer((req,res) => {
     }
 
     if (req.method === "GET" && path.extname(req.url as string) === '.css') {
-        // Видаляємо початковий слеш з req.url, щоб шлях сформувався коректно
         const cssFileName = (req.url as string).substring(1);
         const PATH_TO_CSS = path.join("src", "styles", cssFileName);
 

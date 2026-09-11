@@ -19,11 +19,11 @@ const FILE_TO_PATH = path.join(FOLDER_NAME,'logs.txt')
 
 FileWorker.path = FILE_TO_PATH;
 
-// let content:string|undefined = await FileWorker.getContent()
-// await FileWorker.writeToFile(FILE_TO_PATH, content)
-// // ?. означає, що якщо об'єкт зліва не є null або undefined, то виконується метод справа. Якщо об'єкт зліва є null або undefined, то метод справа не виконується і повертається undefined
-// content = (await FileWorker.readFile(FILE_TO_PATH))?.toString('utf-8');
-// console.log(`Content from logs.txt: ${content} \n`);
+let content:string|undefined = await FileWorker.getContent()
+await FileWorker.writeToFile(FILE_TO_PATH, content)
+// ?. означає, що якщо об'єкт зліва не є null або undefined, то виконується метод справа. Якщо об'єкт зліва є null або undefined, то метод справа не виконується і повертається undefined
+content = (await FileWorker.readFile(FILE_TO_PATH))?.toString('utf-8');
+console.log(`Content from logs.txt: ${content} \n`);
 
 // 1. readdir() - читає вміст директорії і повертає масив імен файлів та папок у ній
 const readDirFile = await fs.readdir('./homeworkFsModule');
