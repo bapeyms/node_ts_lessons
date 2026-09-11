@@ -6,6 +6,7 @@
   "scripts": {
     "start": "npx tsx ./src/index.ts",
     "server": "npx tsx watch ./src/server.ts",
+    "serverhttp": "npx tsx watch ./src/server_http.ts",
     "build": "tsc"
   },
   "keywords": [],

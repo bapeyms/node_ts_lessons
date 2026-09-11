@@ -2,15 +2,14 @@ import http from "node:http" // модуль для створення серв�
 import fs from "node:fs"
 import path from "node:path"
 import {URL} from "node:url" // клас для роботи з URL
-import 'dotenv/config'
 import dorenv from "dotenv"
 
 import {books} from "./data/books.js"
 import {showBooks} from "./utilis/showBooks.js"
 import { BookType } from "./types/BookType.js"
-
-const config = dorenv.config() // зчитування .env файлу
  
+dorenv.config() // завантаження змінних середовища з .env файлу
+
 // createServer - створення серверу
 // (req, res) => {} - ф-ція, що буде виконуватися кожного разу, коли клієнт роьитиме http-запит
 const server = http.createServer((req,res) => { 
@@ -73,8 +72,24 @@ const server = http.createServer((req,res) => {
         res.end("Не вказано id книги");
         return;
     }
-    else if(req.method==="POST" && req.url==="books") {
+    else if(req.method==="POST" && req.url==="/books") {
         res.end("ok")
+    }
+    
+    // відображення картинок
+    if (req.method === "GET" && req.url?.startsWith("/images/")) {
+        const imageName = req.url.substring("/images/".length);
+        const PATH_TO_IMAGE = path.join("src", "images", imageName);
+        if (fs.existsSync(PATH_TO_IMAGE)) {
+            const content = fs.readFileSync(PATH_TO_IMAGE);
+            res.setHeader("Content-Type", "image/jpeg");
+            res.end(content);
+        } 
+        else {
+            res.statusCode = 404;
+            res.end("Image not found");
+        }
+        return;
     }
 
     if (req.method === "GET" && path.extname(req.url as string) === '.css') {
@@ -131,6 +146,6 @@ const server = http.createServer((req,res) => {
 });
 
 server.listen(process.env.PORT,()=>{
-    console.log(`Server http://localhost: ${process.env.HOST} has been started...`)
+    console.log(`Server has been started on port ${process.env.PORT}`)
     console.log(`Server name: ${process.env.SERVER_NAME}`);
 })
