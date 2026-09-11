@@ -1,4 +1,4 @@
-import express from "express"
+import express, { response } from "express"
 import "dotenv/config"
 
 import { BookType } from "./types/BookType.js"
@@ -51,6 +51,26 @@ app.get('/books/:id', (req,res)=>{
     };
 
     res.status(response.status).json(response)
+})
+
+// домашнє завдання 11.09.2026
+app.get('/books/:title/:isActive', (req, res) => {
+    const title:string = req.params.title;
+    const isActive:boolean = req.params.isActive === "true";
+    // find() - шукає перший елемент, що відповідає умові і повертає сам елемент/underfined
+    // filter() - шукає усі елементи, що  відповідають умові та повертає їх у нового масиву
+    // includes() - проста перевірка на наявність. повертає або 1, або 0 
+    const filteredBooks = books.filter((book) => 
+        book.isActive === isActive && book.title.toLowerCase().includes(title.toLowerCase()))
+
+    const existBooks:boolean = filteredBooks.length > 0;
+
+    const response:BookResponseType = {
+        data:existBooks ? filteredBooks : null,
+        error:existBooks ? null : "Books not found",
+        status:existBooks ? 200 : 404
+    }
+    res.status(response.status).json(response);
 })
 
 // створення книжки

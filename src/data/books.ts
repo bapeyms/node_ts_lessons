@@ -30,6 +30,24 @@ export const books: Array<BookType> = [
     title: "The Little Prince",
     price: 280,
     isActive: false
+  },
+  {
+    id: 6,
+    title: "TEST",
+    price: 6767,
+    isActive: false
+  },
+  {
+    id: 7,
+    title: "Test test Testik",
+    price: 228,
+    isActive: true
+  },
+  {
+    id: 8,
+    title: "MyTest",
+    price: 228,
+    isActive: true
   }
 ];
  
