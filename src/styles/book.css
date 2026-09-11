@@ -158,3 +158,48 @@ body {
         max-width: 350px;
     }
 }
+
+form {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+form label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #174c3c;
+}
+
+form input,
+form select {
+    width: 100%;
+    padding: 12px 15px;
+
+    border: 1px solid #f0bfd3;
+    border-radius: 12px;
+
+    background-color: #fff9fc;
+    color: #26352d;
+
+    font-size: 16px;
+    outline: none;
+}
+
+form input:focus,
+form select:focus {
+    border-color: #df5d99;
+    box-shadow: 0 0 0 3px rgba(223, 93, 153, 0.12);
+}
+
+form input::placeholder {
+    color: #aaa;
+}
+
+form .book-button {
+    margin-top: 15px;
+}
