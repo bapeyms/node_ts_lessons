@@ -39,10 +39,43 @@ app.get('/book', (req, res) => {
     res.end(JSON.stringify(book));
 })
 
-app.get('/books/:id', (req, res) => {
-    const id:number = +req.params.id; // +req.params.id - перетворює рядок в число
-    const book:BookType | undefined = books.find((book) => book.id === id)
+// одна книга за айді
+app.get('/books/:id', (req,res)=>{
+    const id:number = +req.params.id
+    const book:BookType|undefined = books.find((book)=>book.id===id);
+    const exist_book:boolean = (book!==undefined)
+    const response:BookResponseType = {
+        data:exist_book?book as BookType:null,
+        error:exist_book?null:"The book not found",
+        status:exist_book?200:404
+    };
 
+    res.status(response.status).json(response)
+})
+
+// створення книжки
+app.post('/books',(req,res)=>{
+    const new_book:BookType = {
+        id: books.length+1,
+        title: "New Book",
+        price: 100,
+        isActive: false
+    }
+
+    books.push(new_book)
+    const response:BookResponseType = {
+        data:new_book,
+        error:null,
+        status:201
+    };
+
+    res.status(response.status).json(response)
+})
+
+// видалити одну книгу за айді
+app.delete('/books/:id', (req, res) => {
+    const id:number = +req.params.id;
+    const index:number = books.findIndex((book) => book.id === id);
     let status_code:number = 200;
     const response:BookResponseType = {
         data: null,
@@ -50,13 +83,14 @@ app.get('/books/:id', (req, res) => {
         status: 200
     }
 
-    if(book === undefined) {
+    if(index === -1) {
         status_code = 404;
         response.status = status_code;
         response.error = "Book not found";
     }
     else {
-        response.data = book;
+        books.splice(index, 1);
+        response.data = books[index];
     }
     
     res.writeHead(status_code, {
@@ -65,11 +99,16 @@ app.get('/books/:id', (req, res) => {
     res.end(JSON.stringify(response));
 })
 
-app.get('/books', (req, res) => {
-    res.writeHead(200, {
-        "Content-Type": "application/json"
-    })
-    res.end(JSON.stringify(books));
+// усі книги
+app.get('/books',(req,res)=>{
+    const exist_book:boolean = books.length>0
+    const response:BookResponseType = {
+        data:exist_book?books:null,
+        error:exist_book?null:"Books list is empty",
+        status:exist_book?200:404
+    };
+
+    res.status(response.status).json(response)
 })
 
 app.listen(PORT, () => {
