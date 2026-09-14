@@ -4,6 +4,8 @@ import "dotenv/config"
 import { BookType } from "./types/BookType.js"
 import { BookResponseType } from "./types/BookResponseType.js"
 import { books } from "./data/books.js"
+import { getBooksByTitle } from "./utilis/showBooks.js"
+import {compareBooks} from "./utilis/compareBooks.js"
 
 const cl = console.log;
 
@@ -12,6 +14,8 @@ const PORT = process.env.PORT || 4200;
 const HOST = process.env.HOST || "http://localhost";
 
 const app = express() // створення екземпляру express-сервера
+// middleware - попередній обробник
+app.use(express.json()) // читати з body json
 
 const book:BookType = {
     id: 1,
@@ -37,6 +41,48 @@ app.get('/book', (req, res) => {
         "Content-Type": "application/json"
     })
     res.end(JSON.stringify(book));
+})
+
+// додавання книжок
+app.post('/books', (req, res) => {
+    const body = req.body;
+    let response:BookResponseType = {
+        data:null,
+        error:null,
+        status:500
+    };
+
+    // typeof - оперетор, який визначає тип значення та повертає його як рядок
+    if (body && typeof body.title === "string" && typeof body.price === "number" && typeof body.isActive === "boolean") {
+        const id = books.length > 0 ? books.sort(compareBooks)[0].id+1:1;
+        const book:BookType = {
+            id,
+            title: body.title,
+            price: body.price,
+            isActive: body.isActive
+        }
+        books.push()
+
+        response = {
+            data:{
+                id,
+                title: body.title,
+                price: body.price,
+                isActive: body.isActive
+            },
+            error:null,
+            status: 201 
+        }
+    }
+    else {
+        response = {
+            data: null,
+            error: "Invalid book data",
+            status: 400
+        }
+    }
+
+    res.status(response.status).json(response)
 })
 
 // одна книга за айді
@@ -73,24 +119,6 @@ app.get('/books/:title/:isActive', (req, res) => {
     res.status(response.status).json(response);
 })
 
-// створення книжки
-app.post('/books',(req,res)=>{
-    const new_book:BookType = {
-        id: books.length+1,
-        title: "New Book",
-        price: 100,
-        isActive: false
-    }
-
-    books.push(new_book)
-    const response:BookResponseType = {
-        data:new_book,
-        error:null,
-        status:201
-    };
-
-    res.status(response.status).json(response)
-})
 
 // видалити одну книгу за айді
 app.delete('/books/:id', (req, res) => {
@@ -122,11 +150,36 @@ app.delete('/books/:id', (req, res) => {
 // усі книги
 app.get('/books',(req,res)=>{
     const exist_book:boolean = books.length>0
-    const response:BookResponseType = {
-        data:exist_book?books:null,
-        error:exist_book?null:"Books list is empty",
-        status:exist_book?200:404
-    };
+    const title = req.query.title as string | undefined;
+
+    let our_books:BookType[] | null = null;
+    if (title !== undefined) {
+        our_books = getBooksByTitle(title, books);
+    }
+
+    let response: BookResponseType;
+
+    if (!exist_book) {
+        response = {
+            data: null,
+            error: "Books list is empty",
+            status: 404
+        };
+    }
+    else if (title !== undefined && our_books === null) {
+        response = {
+            data: null,
+            error: "Book not found",
+            status: 404
+        };
+    }
+    else {
+        response = {
+            data: title !== undefined ? our_books : books,
+            error: null,
+            status: 200
+        };
+    }
 
     res.status(response.status).json(response)
 })

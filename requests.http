@@ -2,11 +2,15 @@ GET http://localhost:4200
 
 ###
 
-POST http://localhost:4200
-content-type: application/json;
+GET http://localhost:4200/books/?title=test
+
+###
+
+POST http://localhost:4200/books
+Content-Type: application/json
 
 {
-    "title": "test book",
-    "price": 2000,
+    "title": "Hello World!",
+    "price": 1000,
     "isActive": true
 }
