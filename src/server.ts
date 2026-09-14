@@ -89,17 +89,61 @@ app.post('/books', (req:Request<{}, ResponseType<BookType>, BookCreateType>, res
 })
 
 // одна книга за айді
-app.get('/books/:id', (req,res)=>{
-    const id:number = +req.params.id
-    const book:BookType|undefined = books.find((book)=>book.id===id);
-    const exist_book:boolean = (book!==undefined)
-    const response:ResponseType<BookType> = {
-        data:exist_book?book as BookType:null,
-        error:exist_book?null:"The book not found",
-        status:exist_book?200:404
+app.get('/books/:id', (req:Request<{id: string}, ResponseType<BookType>, BookCreateType>,res)=>{
+    const id: number = +req.params.id;
+    
+    const book: BookType | undefined =
+    books.find(book => book.id === id);
+    
+    if (book === undefined) {
+        const response: ResponseType<BookType> = {
+            data: null,
+            error: "The book not found",
+            status: 404
+        };
+
+        res.status(response.status).json(response);
+        return;
+    }
+
+    const response: ResponseType<BookType> = {
+        data: book,
+        error: null,
+        status: 200
     };
 
-    res.status(response.status).json(response)
+    res.status(response.status).json(response);
+})
+
+// все, що приходить з url спочатку сприймається як стрінг
+app.get('/authors/:id', (req:Request<{id: string}, ResponseType<AuthorsType>, AuthorCreateType>, res) => {
+    const id:number = +req.params.id;
+
+    const author: AuthorsType | undefined = 
+    authors.find((author) => author.id === id);
+
+    if (author === undefined) {
+        const response: ResponseType<AuthorsType> = {
+            data: null,
+            error: "The author not found",
+            status: 404
+        };
+
+        res.status(response.status).json(response);
+        return;
+    }
+
+    const allAuthorBooks: BookType[] = books.filter(
+        (book) => book.authorIds.includes(id));
+    
+
+    const response = {
+        data: { ...author, books: allAuthorBooks},
+        error: null,
+        status: 200
+    };
+
+    res.status(response.status).json(response);
 })
 
 // домашнє завдання 11.09.2026
