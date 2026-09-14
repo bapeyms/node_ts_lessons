@@ -1,7 +1,8 @@
-import express, { response } from "express"
+import express, { response, Request } from "express"
 import "dotenv/config"
 
 import { BookType } from "./types/BookType.js"
+import { BookCreateType } from "./types/BookType.js"
 import { BookResponseType } from "./types/BookResponseType.js"
 import { books } from "./data/books.js"
 import { getBooksByTitle } from "./utilis/showBooks.js"
@@ -44,7 +45,8 @@ app.get('/book', (req, res) => {
 })
 
 // додавання книжок
-app.post('/books', (req, res) => {
+// Request<Params, ResBody, ReqBody, ReqQuery>
+app.post('/books', (req:Request<{}, BookResponseType, BookCreateType>, res) => {
     const body = req.body;
     let response:BookResponseType = {
         data:null,
@@ -61,25 +63,20 @@ app.post('/books', (req, res) => {
             price: body.price,
             isActive: body.isActive
         }
-        books.push()
+        books.push(book)
 
         response = {
-            data:{
-                id,
-                title: body.title,
-                price: body.price,
-                isActive: body.isActive
-            },
-            error:null,
-            status: 201 
-        }
+            data: book,
+            error: null,
+            status: 201
+        };
     }
     else {
         response = {
             data: null,
             error: "Invalid book data",
             status: 400
-        }
+        };
     }
 
     res.status(response.status).json(response)
