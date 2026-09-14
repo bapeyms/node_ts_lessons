@@ -1,12 +1,16 @@
 import express, { response, Request } from "express"
 import "dotenv/config"
 
-import { BookType } from "./types/BookType.js"
-import { BookCreateType } from "./types/BookType.js"
-import { BookResponseType } from "./types/BookResponseType.js"
+import { BookType, BookCreateType } from "./types/BookType.js"
+import { AuthorsType, AuthorCreateType } from "./types/AuthorsType.js"
+import { ResponseType } from "./types/ResponseType.js"
+
 import { books } from "./data/books.js"
-import { getBooksByTitle } from "./utilis/showBooks.js"
+import { authors } from "./data/authors.js"
+
+import { getItemsBySearch } from "./utilis/getItemsBySearch.js"
 import {compareBooks} from "./utilis/compareBooks.js"
+import { createResponse } from "./utilis/createResponse.js"
 
 const cl = console.log;
 
@@ -47,9 +51,9 @@ app.get('/book', (req, res) => {
 
 // додавання книжок
 // Request<Params, ResBody, ReqBody, ReqQuery>
-app.post('/books', (req:Request<{}, BookResponseType, BookCreateType>, res) => {
+app.post('/books', (req:Request<{}, ResponseType<BookType>, BookCreateType>, res) => {
     const body = req.body;
-    let response:BookResponseType = {
+    let response:ResponseType<BookType> = {
         data:null,
         error:null,
         status:500
@@ -89,7 +93,7 @@ app.get('/books/:id', (req,res)=>{
     const id:number = +req.params.id
     const book:BookType|undefined = books.find((book)=>book.id===id);
     const exist_book:boolean = (book!==undefined)
-    const response:BookResponseType = {
+    const response:ResponseType<BookType> = {
         data:exist_book?book as BookType:null,
         error:exist_book?null:"The book not found",
         status:exist_book?200:404
@@ -110,7 +114,7 @@ app.get('/books/:title/:isActive', (req, res) => {
 
     const existBooks:boolean = filteredBooks.length > 0;
 
-    const response:BookResponseType = {
+    const response:ResponseType<BookType> = {
         data:existBooks ? filteredBooks : null,
         error:existBooks ? null : "Books not found",
         status:existBooks ? 200 : 404
@@ -124,7 +128,7 @@ app.delete('/books/:id', (req, res) => {
     const id:number = +req.params.id;
     const index:number = books.findIndex((book) => book.id === id);
     let status_code:number = 200;
-    const response:BookResponseType = {
+    const response:ResponseType<BookType> = {
         data: null,
         error: null,
         status: 200
@@ -147,38 +151,37 @@ app.delete('/books/:id', (req, res) => {
 })
 
 // усі книги
-app.get('/books',(req,res)=>{
-    const exist_book:boolean = books.length>0
+app.get('/books',(req: Request<{}, ResponseType<BookType>, BookCreateType>,res)=>{
     const title = req.query.title as string | undefined;
 
     let our_books:BookType[] | null = null;
     if (title !== undefined) {
-        our_books = getBooksByTitle(title, books);
+        our_books = getItemsBySearch(title, books, book => book.title);
     }
 
-    let response: BookResponseType;
+    const response = createResponse<BookType>(
+        books,
+        our_books,
+        title !== undefined
+    );
 
-    if (!exist_book) {
-        response = {
-            data: null,
-            error: "Books list is empty",
-            status: 404
-        };
+    res.status(response.status).json(response)
+})
+
+// усі автори
+app.get('/authors', (req:Request<{}, ResponseType<AuthorsType>, AuthorCreateType>, res) => {
+    const lastName = req.query.lastName as string | undefined;
+
+    let our_author: AuthorsType[] | null = null; 
+    if (lastName !== undefined) {
+        our_author = getItemsBySearch(lastName, authors, author => author.lastName);
     }
-    else if (title !== undefined && our_books === null) {
-        response = {
-            data: null,
-            error: "Book not found",
-            status: 404
-        };
-    }
-    else {
-        response = {
-            data: title !== undefined ? our_books : books,
-            error: null,
-            status: 200
-        };
-    }
+
+    const response = createResponse<AuthorsType>(
+        authors,
+        our_author,
+        lastName !== undefined
+    );
 
     res.status(response.status).json(response)
 })
