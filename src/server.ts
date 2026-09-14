@@ -22,7 +22,8 @@ const book:BookType = {
     id: 1,
     title: "The Great Gatsby",
     price: 2000,
-    isActive: true
+    isActive: true,
+    authorIds: [2]
 }
 
 // req та res мають свої типи даних
@@ -61,7 +62,8 @@ app.post('/books', (req:Request<{}, BookResponseType, BookCreateType>, res) => {
             id,
             title: body.title,
             price: body.price,
-            isActive: body.isActive
+            isActive: body.isActive,
+            authorIds: body.authorIds
         }
         books.push(book)
 
