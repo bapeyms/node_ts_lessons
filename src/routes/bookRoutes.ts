@@ -17,20 +17,55 @@ bookRouter.get('/', async ( // req та res мають свої типи дан�
     req:Request<{}, ResponseType<BookType>, null, {title: string}>, res:Response) => {
     // const title = req.query.title as string | undefined;
     
-    //     let our_books:BookType[] | null = null;
-    //     if (title !== undefined) {
-    //         our_books = getItemsBySearch(title, books, book => book.title);
-    //     }
+    // let our_books:BookType[] | null = null;
+    // if (title !== undefined) {
+    //     our_books = getItemsBySearch(title, books, book => book.title);
+    // }
     
-    //     const response = createResponse<BookType>(
-    //         books,
-    //         our_books,
-    //         title !== undefined
-    //     );
+    // const response = createResponse<BookType>(
+    //     books,
+    //     our_books,
+    //     title !== undefined
+    // );
     
-    //     res.status(response.status).json(response)
-    const result = await pool.query("SELECT * FROM booksdb")
-    res.json(result.rows);
+    // res.status(response.status).json(response)
+
+    // для бази даних
+    try {
+        const title = req.query.title;
+        let result;
+
+        if (title) {
+            result = await pool.query(
+                // ILIKE дозволяє не враховувати регістр
+                // $1 - місце для значень, куди підставляється перше значення з масиву, яке передається другим аргументом
+                // такий спосіб передачі даних називається параметризованим SQL-запитом
+                "SELECT * FROM booksdb WHERE title ILIKE $1",
+                // %% - означає будь-яку к-сть символів, тобто дозволяє знаходити тайтл по одному слову
+                [`%${title}%`]
+            );
+        }
+        else {
+            result = await pool.query(
+                "SELECT * FROM booksdb"
+            );
+        }
+
+        const response: ResponseType<BookType> = {
+            data: result.rows,
+            error: null,
+            status: 200
+        }
+        res.status(response.status).json(response);
+    }
+    catch (error) {
+        const response: ResponseType<BookType> = {
+            data: null,
+            error: "Database error",
+            status: 500
+        };
+        res.status(response.status).json(response);
+    }
 })
 
 // додавання книжок
@@ -74,30 +109,63 @@ bookRouter.post('/', (req:Request<{}, ResponseType<BookType>, BookCreateType>, r
 })
 
 // одна книга за айді
-bookRouter.get('/:id', (req:Request<{id: string}, ResponseType<BookType>, BookCreateType>,res)=>{
+bookRouter.get('/:id', async (req:Request<{id: string}, ResponseType<BookType>, BookCreateType>,res)=>{
+    // const id: number = +req.params.id;
+    
+    // const book: BookType | undefined =
+    // books.find(book => book.id === id);
+    
+    // if (book === undefined) {
+    //     const response: ResponseType<BookType> = {
+    //         data: null,
+    //         error: "The book not found",
+    //         status: 404
+    //     };
+
+    //     res.status(response.status).json(response);
+    //     return;
+    // }
+
+    // const response: ResponseType<BookType> = {
+    //     data: book,
+    //     error: null,
+    //     status: 200
+    // };
+
+    // res.status(response.status).json(response);
+
+    // для бази даних
     const id: number = +req.params.id;
-    
-    const book: BookType | undefined =
-    books.find(book => book.id === id);
-    
-    if (book === undefined) {
+    try {
+        const result = await pool.query(
+            "SELECT * FROM booksdb  WHERE id = $1",
+            [id]
+        );
+        if (result.rows.length === 0) {
+            const response: ResponseType<BookType> = {
+                data: null,
+                error: "The book not found",
+                status: 404
+            };
+            res.status(response.status).json(response);
+            return;
+        }
+
+        const response: ResponseType<BookType> = {
+            data: result.rows[0],
+            error: null,
+            status: 200
+        }
+        res.status(response.status).json(response);
+    }
+    catch (error) {
         const response: ResponseType<BookType> = {
             data: null,
-            error: "The book not found",
-            status: 404
+            error: "Database error",
+            status: 500
         };
-
         res.status(response.status).json(response);
-        return;
     }
-
-    const response: ResponseType<BookType> = {
-        data: book,
-        error: null,
-        status: 200
-    };
-
-    res.status(response.status).json(response);
 })
 
 // домашнє завдання 11.09.2026

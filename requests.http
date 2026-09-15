@@ -2,7 +2,7 @@ GET http://localhost:4200
 
 ###
 
-GET http://localhost:4200/books
+GET http://localhost:4200/books?title=java
 
 ###
 
@@ -14,3 +14,6 @@ Content-Type: application/json
     "price": 1000,
     "isActive": true
 }
+
+###
+GET http://localhost:4200/books/4
