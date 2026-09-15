@@ -2,7 +2,7 @@ GET http://localhost:4200
 
 ###
 
-GET http://localhost:4200/books/?title=test
+GET http://localhost:4200/books
 
 ###
 

@@ -3,6 +3,7 @@ import { BookType, BookCreateType } from "../types/BookType.js";
 import { ResponseType } from "../types/ResponseType.js";
 
 import { books } from "../data/books.js";
+import { pool } from "../db/database.js";
 
 import { getItemsBySearch } from "../utilis/getItemsBySearch.js";
 import { createResponse } from "../utilis/createResponse.js";
@@ -12,22 +13,24 @@ import { compareBooks } from "../utilis/compareBooks.js";
 export const bookRouter = Router();
 
 // отримання всіх книжок, або пошук по тайтлу
-bookRouter.get('/', ( // req та res мають свої типи даних
+bookRouter.get('/', async ( // req та res мають свої типи даних
     req:Request<{}, ResponseType<BookType>, null, {title: string}>, res:Response) => {
-    const title = req.query.title as string | undefined;
+    // const title = req.query.title as string | undefined;
     
-        let our_books:BookType[] | null = null;
-        if (title !== undefined) {
-            our_books = getItemsBySearch(title, books, book => book.title);
-        }
+    //     let our_books:BookType[] | null = null;
+    //     if (title !== undefined) {
+    //         our_books = getItemsBySearch(title, books, book => book.title);
+    //     }
     
-        const response = createResponse<BookType>(
-            books,
-            our_books,
-            title !== undefined
-        );
+    //     const response = createResponse<BookType>(
+    //         books,
+    //         our_books,
+    //         title !== undefined
+    //     );
     
-        res.status(response.status).json(response)
+    //     res.status(response.status).json(response)
+    const result = await pool.query("SELECT * FROM booksdb")
+    res.json(result.rows);
 })
 
 // додавання книжок
