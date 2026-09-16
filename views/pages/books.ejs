@@ -1,0 +1,41 @@
+<h1>Books</h1>
+
+<ul style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 20px;">
+    <% books.forEach(book => { %>
+        <li style="
+            background: lime;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            width: 220px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;">
+            <div>
+                <h3 style="margin: 0 0 6px 0; font-size: 1.1rem; color: #1e293b;">
+                    <%= book.title %>
+                </h3>
+                <span style="font-weight: bold; color: black; font-size: 1rem;">
+                    <%= book.price %> ₴
+                </span>
+            </div>
+
+            <div style="
+                width: 100%;
+                height: 200px;
+                border-radius: 8px;
+                overflow: hidden;
+                background-color: #f8fafc;">
+                <img 
+                    src="<%= Array.isArray(book.images) ? book.images[0] : book.images %>" 
+                    alt="<%= book.title %>"
+                    style="
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        display: block;">
+            </div>
+        </li>
+    <% }) %>
+</ul>

@@ -22,13 +22,16 @@ bookRouter.get('/', async ( // req та res мають свої типи дан�
         our_books = getItemsBySearch(title, books, book => book.title);
     }
     
-    const response = createResponse<BookType>(
-        books,
-        our_books,
-        title !== undefined
-    );
+    res.render("pages/books", {books});
     
-    res.status(response.status).json(response)
+    // формування респонсу
+    // const response = createResponse<BookType>(
+    //     books,
+    //     our_books,
+    //     title !== undefined
+    // );
+    
+    // res.status(response.status).json(response)
 
     // для бази даних
     // try {

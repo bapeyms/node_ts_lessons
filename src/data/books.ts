@@ -30,34 +30,39 @@ export const books: Array<BookType> = [
         title: "Harry Potter and the Philosopher's Stone",
         price: 450,
         isActive: false,
-        authorIds: [4]
+        authorIds: [4],
+        images: "/imgs/pic4.jpg"
     },
     {
         id: 5,
         title: "The Little Prince",
         price: 280,
         isActive: false,
-        authorIds: [5]
+        authorIds: [5],
+        images: "/imgs/pic5.jpg"
     },
     {
         id: 6,
         title: "TEST",
         price: 6767,
         isActive: false,
-        authorIds: [6, 7]
+        authorIds: [6, 7],
+        images: "/imgs/pic6.jpg"
     },
     {
         id: 7,
         title: "Test test Testik",
         price: 228,
         isActive: true,
-        authorIds: [7, 8]
+        authorIds: [7, 8],
+        images: "/imgs/pic7.jpg"
     },
     {
         id: 8,
         title: "MyTest",
         price: 228,
         isActive: true,
-        authorIds: [1, 6, 8]
+        authorIds: [1, 6, 8],
+        images: "/imgs/pic8.jpg"
     }
 ];
