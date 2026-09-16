@@ -141,7 +141,8 @@ const server = http.createServer((req,res) => {
                     id: books.length + 1, 
                     title: parsedData.title ?? "", 
                     price: Number(parsedData.price), 
-                    isActive: Boolean(parsedData.isActive)
+                    isActive: Boolean(parsedData.isActive),
+                    authorIds: []
                 };
                 books.push(newBook);
                 

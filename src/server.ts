@@ -2,6 +2,8 @@ import express from "express"
 import {bookRouter} from "./routes/bookRoutes.js"
 import { authorsRouter } from "./routes/authorsRoutes.js";
 import "dotenv/config"
+import ejs from "ejs"
+import path from "node:path"
 
 const cl = console.log;
 
