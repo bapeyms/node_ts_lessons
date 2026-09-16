@@ -27,7 +27,7 @@ export const books: Array<BookType> = [
     },
     {
         id: 4,
-        title: "Harry Potter and the Philosopher's Stone",
+        title: "Mean Girls'",
         price: 450,
         isActive: false,
         authorIds: [4],
