@@ -3,7 +3,7 @@ import { BookType, BookCreateType } from "../types/BookType.js";
 import { ResponseType } from "../types/ResponseType.js";
 
 import { books } from "../data/books.js";
-import { pool } from "../db/database.js";
+import { pool } from "../db/databaseConnection.js";
 
 import { getItemsBySearch } from "../utilis/getItemsBySearch.js";
 import { createResponse } from "../utilis/createResponse.js";
@@ -15,57 +15,57 @@ export const bookRouter = Router();
 // отримання всіх книжок, або пошук по тайтлу
 bookRouter.get('/', async ( // req та res мають свої типи даних
     req:Request<{}, ResponseType<BookType>, null, {title: string}>, res:Response) => {
-    // const title = req.query.title as string | undefined;
+    const title = req.query.title as string | undefined;
     
-    // let our_books:BookType[] | null = null;
-    // if (title !== undefined) {
-    //     our_books = getItemsBySearch(title, books, book => book.title);
-    // }
+    let our_books:BookType[] | null = null;
+    if (title !== undefined) {
+        our_books = getItemsBySearch(title, books, book => book.title);
+    }
     
-    // const response = createResponse<BookType>(
-    //     books,
-    //     our_books,
-    //     title !== undefined
-    // );
+    const response = createResponse<BookType>(
+        books,
+        our_books,
+        title !== undefined
+    );
     
-    // res.status(response.status).json(response)
+    res.status(response.status).json(response)
 
     // для бази даних
-    try {
-        const title = req.query.title;
-        let result;
+    // try {
+    //     const title = req.query.title;
+    //     let result;
 
-        if (title) {
-            result = await pool.query(
-                // ILIKE дозволяє не враховувати регістр
-                // $1 - місце для значень, куди підставляється перше значення з масиву, яке передається другим аргументом
-                // такий спосіб передачі даних називається параметризованим SQL-запитом
-                "SELECT * FROM booksdb WHERE title ILIKE $1",
-                // %% - означає будь-яку к-сть символів, тобто дозволяє знаходити тайтл по одному слову
-                [`%${title}%`]
-            );
-        }
-        else {
-            result = await pool.query(
-                "SELECT * FROM booksdb"
-            );
-        }
+    //     if (title) {
+    //         result = await pool.query(
+    //             // ILIKE дозволяє не враховувати регістр
+    //             // $1 - місце для значень, куди підставляється перше значення з масиву, яке передається другим аргументом
+    //             // такий спосіб передачі даних називається параметризованим SQL-запитом
+    //             "SELECT * FROM booksdb WHERE title ILIKE $1",
+    //             // %% - означає будь-яку к-сть символів, тобто дозволяє знаходити тайтл по одному слову
+    //             [`%${title}%`]
+    //         );
+    //     }
+    //     else {
+    //         result = await pool.query(
+    //             "SELECT * FROM booksdb"
+    //         );
+    //     }
 
-        const response: ResponseType<BookType> = {
-            data: result.rows,
-            error: null,
-            status: 200
-        }
-        res.status(response.status).json(response);
-    }
-    catch (error) {
-        const response: ResponseType<BookType> = {
-            data: null,
-            error: "Database error",
-            status: 500
-        };
-        res.status(response.status).json(response);
-    }
+    //     const response: ResponseType<BookType> = {
+    //         data: result.rows,
+    //         error: null,
+    //         status: 200
+    //     }
+    //     res.status(response.status).json(response);
+    // }
+    // catch (error) {
+    //     const response: ResponseType<BookType> = {
+    //         data: null,
+    //         error: "Database error",
+    //         status: 500
+    //     };
+    //     res.status(response.status).json(response);
+    // }
 })
 
 // додавання книжок
@@ -110,21 +110,21 @@ bookRouter.post('/', (req:Request<{}, ResponseType<BookType>, BookCreateType>, r
 
 // одна книга за айді
 bookRouter.get('/:id', async (req:Request<{id: string}, ResponseType<BookType>, BookCreateType>,res)=>{
-    // const id: number = +req.params.id;
+    const id: number = +req.params.id;
     
-    // const book: BookType | undefined =
-    // books.find(book => book.id === id);
+    const book: BookType | undefined =
+    books.find(book => book.id === id);
     
-    // if (book === undefined) {
-    //     const response: ResponseType<BookType> = {
-    //         data: null,
-    //         error: "The book not found",
-    //         status: 404
-    //     };
+    if (book === undefined) {
+        const response: ResponseType<BookType> = {
+            data: null,
+            error: "The book not found",
+            status: 404
+        };
 
-    //     res.status(response.status).json(response);
-    //     return;
-    // }
+        res.status(response.status).json(response);
+        return;
+    }
 
     // const response: ResponseType<BookType> = {
     //     data: book,
@@ -135,37 +135,37 @@ bookRouter.get('/:id', async (req:Request<{id: string}, ResponseType<BookType>, 
     // res.status(response.status).json(response);
 
     // для бази даних
-    const id: number = +req.params.id;
-    try {
-        const result = await pool.query(
-            "SELECT * FROM booksdb  WHERE id = $1",
-            [id]
-        );
-        if (result.rows.length === 0) {
-            const response: ResponseType<BookType> = {
-                data: null,
-                error: "The book not found",
-                status: 404
-            };
-            res.status(response.status).json(response);
-            return;
-        }
+    // const id: number = +req.params.id;
+    // try {
+    //     const result = await pool.query(
+    //         "SELECT * FROM booksdb  WHERE id = $1",
+    //         [id]
+    //     );
+    //     if (result.rows.length === 0) {
+    //         const response: ResponseType<BookType> = {
+    //             data: null,
+    //             error: "The book not found",
+    //             status: 404
+    //         };
+    //         res.status(response.status).json(response);
+    //         return;
+    //     }
 
-        const response: ResponseType<BookType> = {
-            data: result.rows[0],
-            error: null,
-            status: 200
-        }
-        res.status(response.status).json(response);
-    }
-    catch (error) {
-        const response: ResponseType<BookType> = {
-            data: null,
-            error: "Database error",
-            status: 500
-        };
-        res.status(response.status).json(response);
-    }
+    //     const response: ResponseType<BookType> = {
+    //         data: result.rows[0],
+    //         error: null,
+    //         status: 200
+    //     }
+    //     res.status(response.status).json(response);
+    // }
+    // catch (error) {
+    //     const response: ResponseType<BookType> = {
+    //         data: null,
+    //         error: "Database error",
+    //         status: 500
+    //     };
+    //     res.status(response.status).json(response);
+    // }
 })
 
 // домашнє завдання 11.09.2026

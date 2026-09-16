@@ -7,7 +7,8 @@ export type BookType = {
     price: number,
     isActive?: boolean,
     // дозволяє ?: створювати об'єкти без поля, де є цей оператор
-    authorIds: number[]
+    authorIds: number[],
+    images?: string
 };
 
 // Omit - це утиліта, яка створює новий тип, виключаючи з нього певні властивості

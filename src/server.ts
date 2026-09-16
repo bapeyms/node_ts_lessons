@@ -12,6 +12,7 @@ const HOST = process.env.HOST || "http://localhost";
 const app = express() // створення екземпляру express-сервера
 // middleware - попередній обробник
 app.use(express.json()) // читати з body json
+app.use(express.static("public")) // підключення статичних файлів до серверу
 
 app.get('/', (req, res) => {
     res.writeHead(200, {

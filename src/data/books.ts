@@ -6,21 +6,24 @@ export const books: Array<BookType> = [
         title: "Pride and Prejudice",
         price: 250,
         isActive: true,
-        authorIds: [1]
+        authorIds: [1],
+        images: "/imgs/pic1.jpg"
     },
     {
         id: 2,
         title: "The Great Gatsby",
         price: 320,
         isActive: false,
-        authorIds: [2]
+        authorIds: [2],
+        images: "/imgs/pic2.jpg"
     },
     {
         id: 3,
         title: "The Catcher in the Rye",
         price: 400,
         isActive: true,
-        authorIds: [3]
+        authorIds: [3],
+        images: "/imgs/pic3.jpg"
     },
     {
         id: 4,
