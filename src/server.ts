@@ -5,6 +5,8 @@ import {bookRouter} from "./routes/bookRoutes.js"
 import { authorsRouter } from "./routes/authorsRoutes.js";
 import "dotenv/config"
 import ejs from "ejs"
+import expressEjsLayouts from "express-ejs-layouts";
+
 import path from "node:path"
 import { fileURLToPath } from "node:url";
 
@@ -21,11 +23,12 @@ const app = express() // створення екземпляру express-сер�
 // middleware - попередній обробник
 app.use(express.json()) // читати з body json
 app.use(express.static("public")) // підключення статичних файлів до серверу
+app.use(expressEjsLayouts)
 
 // для динамічного рендерингу за допомогою шаблонізатора EJS 
-app.set("views", path.join(__dirname, "..", path.sep, "views")); // вказує абсолютний шлях до папки, де зберігаються всі файли із шаблонів ejs
+app.set("views", path.join(__dirname, "..", "views")); // вказує абсолютний шлях до папки, де зберігаються всі файли із шаблонів ejs
 app.set("view engine", "ejs"); // вказується, який шаблонізатор використовується за замовчуванням
-
+app.set("layout", path.join(__dirname, "..", "views", "layouts", "main"));
 
 app.get('/', (req:Request<null, null, null, {value: string}>, res) => {
     // за допомогою команди app.set("view engine", "ejs") express автоматично розуміє, що треба шукати файл з розширенням

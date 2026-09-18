@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+
+    <style>
+        .book-page {
+            padding: 30px 40px;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .book-page .back-link {
+            display: inline-block;
+            margin-bottom: 25px;
+            color: black;
+            background: lime;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .book-page .back-link:hover {
+            background: #bfff00;
+            transform: translateY(-2px);
+        }
+
+        .book-page .book-card-single {
+            max-width: 850px;
+            min-height: 420px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .book-page .book-cover {
+            width: 280px;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+        }
+
+        .book-page .book-info {
+            flex: 1;
+        }
+
+        .book-page .book-info h1 {
+            padding-bottom: 15px;
+            border-bottom: 2px solid lime;
+            font-size: 2rem;
+            color: #1e293b;
+        }
+
+        .book-page .book-info p {
+            margin: 18px 0;
+            font-size: 1.1rem;
+            color: #475569;
+        }
+
+        .book-page .book-info strong {
+            color: #1e293b;
+        }
+
+        .book-page .book-price {
+            display: inline-block;
+            margin-top: 5px;
+            padding: 10px 16px;
+            background: lime;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: black;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="book-page">
+        <a class="back-link" href="/books">
+            ← Назад до списку книг
+        </a>
+
+        <div class="book-card-single">
+            <div class="book-info">
+                <h1><%= book.title %></h1>
+                <p class="book-price"><%= book.price %> грн</p>
+            </div>
+            <img src="<%= book.images %>" alt="<%= book.title %>" class="book-cover">
+        </div>
+
+    </div>
+</body>
+</html>
