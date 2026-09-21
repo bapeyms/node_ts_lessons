@@ -8,14 +8,56 @@ import { pool } from "../db/databaseConnection.js";
 import { getItemsBySearch } from "../utilis/getItemsBySearch.js";
 import { createResponse } from "../utilis/createResponse.js";
 import { compareBooks } from "../utilis/compareBooks.js";
+import { title } from "node:process";
 
+import multer from "multer";
+import path from "node:path";
 
 export const bookRouter = Router();
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join("public", "imgs"));
+    },
+    filename: (req, file, cb) => {
+        const uniqueFileName = Date.now() + "_" + file.originalname;
+        req.image = uniqueFileName;
+
+        cb(null, uniqueFileName);
+    }
+});
+const upload = multer({ storage });
+
+
+// post для форми
+bookRouter.post("/add-book",
+    upload.single("image"),
+    (
+        req: Request<{}, BookCreateType>,
+        res: Response,
+    ) => {
+        const { title, price, year } = req.body
+        const is_active = req.body.iActive ? true : false
+        const book: BookType = {
+            id: 10000,
+            title,
+            price,
+            isActive: is_active,
+            images: req.image,
+            authorIds: []
+        }
+        console.log(book)
+        res.end()
+    }
+)
+
+
 
 // отримання всіх книжок, або пошук по тайтлу
 bookRouter.get('/', async ( // req та res мають свої типи даних
     req:Request<{}, ResponseType<BookType>, null, {title: string}>, res:Response) => {
-
+        console.log()
+        
     // const title = req.query.title as string | undefined;
     
     // let our_books:BookType[] | null = null;
@@ -44,14 +86,14 @@ bookRouter.get('/', async ( // req та res мають свої типи дан�
                 // ILIKE дозволяє не враховувати регістр
                 // $1 - місце для значень, куди підставляється перше значення з масиву, яке передається другим аргументом
                 // такий спосіб передачі даних називається параметризованим SQL-запитом
-                "SELECT * FROM booksdb WHERE title ILIKE $1",
+                "SELECT * FROM books WHERE title ILIKE $1",
                 // %% - означає будь-яку к-сть символів, тобто дозволяє знаходити тайтл по одному слову
                 [`%${title}%`]
             );
         }
         else {
             result = await pool.query(
-                "SELECT * FROM booksdb"
+                "SELECT * FROM books"
             );
         }
 
@@ -59,6 +101,7 @@ bookRouter.get('/', async ( // req та res мають свої типи дан�
             books: result.rows,
             title: "Books"
         })
+
 
         // json-формат
         // const response: ResponseType<BookType> = {
@@ -70,9 +113,7 @@ bookRouter.get('/', async ( // req та res мають свої типи дан�
     }
     catch (error) {
         console.error(error);
-        res.status(500).render('error', {
-            message: "Database error!"
-        })
+        console.error("DATABASE ERROR:", error);
 
         // json-формат
         // const response: ResponseType<BookType> = {
@@ -155,7 +196,7 @@ bookRouter.get('/:id', async (req:Request<{id: string}, ResponseType<BookType>, 
     const id: number = +req.params.id;
     try {
         const result = await pool.query(
-            "SELECT * FROM booksdb  WHERE id = $1",
+            "SELECT * FROM books WHERE id = $1",
             [id]
         );
         if (result.rows.length === 0) {
@@ -187,10 +228,7 @@ bookRouter.get('/:id', async (req:Request<{id: string}, ResponseType<BookType>, 
         // res.status(response.status).json(response);
     }
     catch (error) {
-        console.error(error);
-        res.status(500).render('error', {
-            message: "Database error!"
-        })
+        console.error("DATABASE ERROR:", error);
 
         // json-формат
         // const response: ResponseType<BookType> = {

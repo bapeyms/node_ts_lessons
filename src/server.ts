@@ -22,6 +22,7 @@ const HOST = process.env.HOST || "http://localhost";
 const app = express() // створення екземпляру express-сервера
 // middleware - попередній обробник
 app.use(express.json()) // читати з body json
+app.use(express.urlencoded({extended: true})); // middleware, який дозволяє серверу отримувати дані, відправлені з HTML-форм
 app.use(express.static("public")) // підключення статичних файлів до серверу
 app.use(expressEjsLayouts)
 
