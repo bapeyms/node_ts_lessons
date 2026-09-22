@@ -21,37 +21,46 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const uniqueFileName = Date.now() + "_" + file.originalname;
-        req.image = uniqueFileName;
-
         cb(null, uniqueFileName);
     }
 });
 const upload = multer({ storage });
 
-
 // post для форми
-bookRouter.post("/add-book",
-    upload.single("image"),
-    (
-        req: Request<{}, BookCreateType>,
-        res: Response,
-    ) => {
-        const { title, price, year } = req.body
-        const is_active = req.body.iActive ? true : false
-        const book: BookType = {
-            id: 10000,
-            title,
-            price,
-            isActive: is_active,
-            images: req.image,
-            authorIds: []
-        }
-        console.log(book)
-        res.end()
+bookRouter.get("/add-book", (req: Request, res: Response) => {
+    res.render("pages/book-form", { title: "Add Book" });
+});
+
+bookRouter.post("/add-book",  upload.single("image"), async (req: Request<{}, BookCreateType>, res: Response) => {
+    try {
+        const { title, price, year } = req.body;
+        const parsedPrice = Number(price) || 0;
+        const parsedYear = Number(year) || new Date().getFullYear();
+        const isActive = req.body.is_active === "true"; 
+        const imagePath = req.file ? req.file.filename : "";
+
+        await pool.query(
+            `INSERT INTO books (title, price, year, image, is_active)
+            VALUES ($1, $2, $3, $4, $5)`,
+            [title, parsedPrice, parsedYear, imagePath, isActive]
+        );
+        res.redirect("/add-book")
+    }
+    catch (error) {
+        console.error("DATABASE ERROR:", error);
+        res.status(500).render("pages/error", 
+            { message: "Error occured during book adding" });
+    }
     }
 )
 
+bookRouter.get("/", async (req: Request<{}, BookCreateType, null, { title: string }>, res: Response) => {
+        const data = await fetch(`${process.env.PATH_TO_JSON_SERVER}/book`)
+        const json = await data.json()
+        console.log(json)
+        res.render("pages/books", { book: json, title: "Books" })
 
+    });
 
 // отримання всіх книжок, або пошук по тайтлу
 bookRouter.get('/', async ( // req та res мають свої типи даних
@@ -194,6 +203,12 @@ bookRouter.get('/:id', async (req:Request<{id: string}, ResponseType<BookType>, 
 
     // для бази даних
     const id: number = +req.params.id;
+    if (isNaN(id)) {
+        return res.status(400).render('pages/error', {
+            message: "Incorrect book ID!"
+        });
+    }
+
     try {
         const result = await pool.query(
             "SELECT * FROM books WHERE id = $1",
