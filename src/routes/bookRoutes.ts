@@ -184,6 +184,43 @@ bookRouter.post('/', (req:Request<{}, ResponseType<BookType>, BookCreateType>, r
     res.status(response.status).json(response)
 })
 
+bookRouter.delete("/:id", async (req: Request<{id : string}>, res: Response) => {
+    try {
+        const {id} = req.params;
+        const bookResult = await pool.query(
+            "SELECT image FROM books WHERE id = $1",
+            [id]
+        )
+        if (bookResult.rows.length === 0) {
+            return res.status(404).json({
+                message: "Book was not found"
+            })
+        }
+        const imageName = bookResult.rows[0].image;
+
+        if (imageName && imageName !== "default.jpg") {
+            const imagePath = path.join(process.cwd(), "public", "imgs", imageName);
+            try {
+                await fs.unlink(imagePath); // видалення файлу
+            }
+            catch (err) {
+                console.warn("File was not found: ", imagePath);
+            }
+        }
+
+        await pool.query("DELETE FROM books WHERE id = $1", [id]);
+        res.status(200).json({
+            message: "Book was deleted successfully!"
+        })
+    }
+    catch (error) {
+        console.error("DATABASE ERROR: ", error);
+        res.status(500).json(
+            {message: "Error deleting book"}
+        )
+    }
+})
+
 // одна книга за айді
 bookRouter.get('/:id', async (req:Request<{id: string}, ResponseType<BookType>, BookCreateType>,res)=>{
     
