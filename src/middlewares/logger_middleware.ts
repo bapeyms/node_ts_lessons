@@ -12,5 +12,6 @@ export const loggerMiddleware = async (req:Request,res:Response,next:NextFunctio
         const body = JSON.stringify(req.body)
          FileWorker.readFile(body)
     }
+    
     next() //Обов'язково
 }

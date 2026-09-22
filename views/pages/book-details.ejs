@@ -97,7 +97,9 @@
                 <h1><%= book.title %></h1>
                 <p class="book-price"><%= book.price %> грн</p>
             </div>
-            <img src="<%= book.image %>" alt="<%= book.title %>" class="book-cover">
+            <% let imgName = Array.isArray(book.image) ? book.image[0] : book.image;
+            let imgSrc = (imgName && typeof imgName === 'string') ? '/imgs/' + imgName : '/imgs/default.png';%>
+            <img src="<%= imgSrc %>" alt="<%= book.title %>" class="book-cover">
         </div>
 
     </div>

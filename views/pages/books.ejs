@@ -25,8 +25,12 @@
                 border-radius: 8px;
                 overflow: hidden;
                 background-color: #f8fafc;">
+                <%
+                let imgName = Array.isArray(book.image) ? book.image[0] : book.image;
+                let imgSrc = (imgName && typeof imgName === 'string') ? '/imgs/' + imgName : '/imgs/default.png';
+                %>
                 <img 
-                    src="<%= Array.isArray(book.image) ? book.image[0] : book.image %>" 
+                    src="<%= imgSrc %>" 
                     alt="<%= book.title %>"
                     style="
                         width: 100%;

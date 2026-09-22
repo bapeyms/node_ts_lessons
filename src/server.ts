@@ -21,17 +21,21 @@ const PORT = process.env.PORT || 4200;
 const HOST = process.env.HOST || "http://localhost";
 
 const app = express() // створення екземпляру express-сервера
+app.use((req, res, next) => {
+    console.log(`[REQUEST] ${req.method} ${req.url}`);
+    next();
+});
 // middleware - попередній обробник
 app.use(loggerMiddleware);
 app.use(express.json()) // читати з body json
 app.use(express.urlencoded({extended: true})); // middleware, який дозволяє серверу отримувати дані, відправлені з HTML-форм
-app.use(express.static("public")) // підключення статичних файлів до серверу
+app.use(express.static(path.join(process.cwd(), "public"))) // підключення статичних файлів до серверу
 app.use(expressEjsLayouts)
 
 // для динамічного рендерингу за допомогою шаблонізатора EJS 
 app.set("views", path.join(__dirname, "..", "views")); // вказує абсолютний шлях до папки, де зберігаються всі файли із шаблонів ejs
 app.set("view engine", "ejs"); // вказується, який шаблонізатор використовується за замовчуванням
-app.set("layout", path.join(__dirname, "..", "views", "layouts", "main"));
+app.set("layout", "layouts/main");
 
 app.get('/', (req:Request<null, null, null, {value: string}>, res) => {
     // за допомогою команди app.set("view engine", "ejs") express автоматично розуміє, що треба шукати файл з розширенням
