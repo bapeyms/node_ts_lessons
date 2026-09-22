@@ -9,6 +9,7 @@ import expressEjsLayouts from "express-ejs-layouts";
 
 import path from "node:path"
 import { fileURLToPath } from "node:url";
+import { loggerMiddleware } from "./middlewares/logger_middleware.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,6 +22,7 @@ const HOST = process.env.HOST || "http://localhost";
 
 const app = express() // створення екземпляру express-сервера
 // middleware - попередній обробник
+app.use(loggerMiddleware);
 app.use(express.json()) // читати з body json
 app.use(express.urlencoded({extended: true})); // middleware, який дозволяє серверу отримувати дані, відправлені з HTML-форм
 app.use(express.static("public")) // підключення статичних файлів до серверу

@@ -17,7 +17,8 @@ export const bookRouter = Router();
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join("public", "imgs"));
+        const uploadFile = path.join(process.cwd(), "public", "imgs");
+        cb(null, uploadFile);
     },
     filename: (req, file, cb) => {
         const uniqueFileName = Date.now() + "_" + file.originalname;
@@ -36,15 +37,15 @@ bookRouter.post("/add-book",  upload.single("image"), async (req: Request<{}, Bo
         const { title, price, year } = req.body;
         const parsedPrice = Number(price) || 0;
         const parsedYear = Number(year) || new Date().getFullYear();
-        const isActive = req.body.is_active === "true"; 
+        const isActive = req.body.isActive === "true"; 
         const imagePath = req.file ? req.file.filename : "";
 
         await pool.query(
-            `INSERT INTO books (title, price, year, image, is_active)
+            `INSERT INTO books (title, price, publication_year, image, is_active)
             VALUES ($1, $2, $3, $4, $5)`,
             [title, parsedPrice, parsedYear, imagePath, isActive]
         );
-        res.redirect("/add-book")
+        res.redirect("/books/add-book")
     }
     catch (error) {
         console.error("DATABASE ERROR:", error);
@@ -54,13 +55,14 @@ bookRouter.post("/add-book",  upload.single("image"), async (req: Request<{}, Bo
     }
 )
 
-bookRouter.get("/", async (req: Request<{}, BookCreateType, null, { title: string }>, res: Response) => {
-        const data = await fetch(`${process.env.PATH_TO_JSON_SERVER}/book`)
-        const json = await data.json()
-        console.log(json)
-        res.render("pages/books", { book: json, title: "Books" })
+// для json-сервера
+// bookRouter.get("/", async (req: Request<{}, BookCreateType, null, { title: string }>, res: Response) => {
+//         const data = await fetch(`${process.env.PATH_TO_JSON_SERVER}/book`)
+//         const json = await data.json()
+//         console.log(json)
+//         res.render("pages/books", { book: json, title: "Books" })
 
-    });
+//     });
 
 // отримання всіх книжок, або пошук по тайтлу
 bookRouter.get('/', async ( // req та res мають свої типи даних

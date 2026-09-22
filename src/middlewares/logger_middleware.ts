@@ -1,5 +1,16 @@
-import { Request, Response, NextFunction } from "express";
-
-const loggerMiddleware = async (req:Request, res:Response) => [
-    
-]
+import {Request, Response, NextFunction} from "express"
+import FileWorker from "../funcs.js"
+import path from "node:path"
+ 
+export const loggerMiddleware = async (req:Request,res:Response,next:NextFunction)=>{
+    FileWorker.path = path.join("..","..","logs","logs.txt")
+    if(req.params) {
+        const params = JSON.stringify(req.params)
+        FileWorker.readFile(params)
+    }
+    if(req.body) {
+        const body = JSON.stringify(req.body)
+         FileWorker.readFile(body)
+    }
+    next() //Обов'язково
+}
