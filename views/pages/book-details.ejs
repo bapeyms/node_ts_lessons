@@ -3,105 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <title><%= title %></title>
-
     <style>
         .book-page {
-            padding: 30px 40px;
-            background: #f8fafc;
-            color: #1e293b;
+            padding: 10px 0;
+            color: #3f3026;
         }
 
-        .book-page .back-link {
+        .back-link {
             display: inline-block;
             margin-bottom: 25px;
-            color: black;
-            background: lime;
+            color: #fffaf4;
+            background: #79583f;
             text-decoration: none;
-            font-weight: bold;
-            padding: 10px 16px;
+            font-weight: 500;
+            padding: 10px 17px;
             border-radius: 8px;
-            transition: 0.2s;
+            transition: 0.2s ease;
         }
 
-        .book-page .back-link:hover {
-            background: #bfff00;
+        .back-link:hover {
+            background: #5f4532;
+            color: #fffaf4;
             transform: translateY(-2px);
         }
 
-        .book-page .book-card-single {
-            max-width: 850px;
-            min-height: 420px;
+
+        .book-card-single {
+            max-width: 900px;
+            min-height: 430px;
             margin: 0 auto;
-            background: white;
-            border: 1px solid #e2e8f0;
+            background: #e8d8c3;
+            border: 1px solid #cdb69d;
             border-radius: 16px;
             padding: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 6px 20px rgba(70, 48, 30, 0.10);
             display: flex;
-            gap: 35px;
+            gap: 40px;
             align-items: center;
         }
 
-        .book-page .book-cover {
+        .book-cover {
             width: 280px;
-            height: 350px;
+            height: 360px;
             object-fit: cover;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            border: 1px solid #c7ad91;
+            box-shadow: 0 6px 16px rgba(70, 48, 30, 0.18);
             flex-shrink: 0;
         }
 
-        .book-page .book-info {
+        .book-info {
             flex: 1;
         }
 
-        .book-page .book-info h1 {
+        .book-info h1 {
+            margin: 0 0 20px 0;
             padding-bottom: 15px;
-            border-bottom: 2px solid lime;
-            font-size: 2rem;
-            color: #1e293b;
+            border-bottom: 1px solid #b99d80;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 2.2rem;
+            font-weight: normal;
+            letter-spacing: 1px;
+            color: #3b2b21;
         }
 
-        .book-page .book-info p {
+        .book-info p {
             margin: 18px 0;
-            font-size: 1.1rem;
-            color: #475569;
+            font-size: 1.05rem;
+            color: #634b39;
         }
 
-        .book-page .book-info strong {
-            color: #1e293b;
+        .book-info strong {
+            color: #3f3026;
         }
 
-        .book-page .book-price {
+        .book-price {
             display: inline-block;
-            margin-top: 5px;
-            padding: 10px 16px;
-            background: lime;
+            margin-top: 10px;
+            padding: 10px 18px;
+            background: #f4eee5;
+            border: 1px solid #c7ad91;
             border-radius: 8px;
             font-size: 1.2rem;
             font-weight: bold;
-            color: black;
+            color: #79583f;
         }
 
+        @media (max-width: 700px) {
+            .book-card-single {
+                flex-direction: column;
+                padding: 20px;
+                text-align: center;
+            }
+
+            .book-cover {
+                width: 220px;
+                height: 290px;
+            }
+
+            .book-info h1 {
+                font-size: 1.8rem;
+            }
+
+            .back-link {
+                margin-bottom: 20px;
+            }
+
+        }
     </style>
 </head>
-
 <body>
     <div class="book-page">
-        <a class="back-link" href="/books">
-            ← Назад до списку книг
-        </a>
-
+        <a class="back-link" href="/books">← Назад до списку книг</a>
         <div class="book-card-single">
+            <% let imgName = Array.isArray(book.image) ? book.image[0] : book.image;
+                let imgSrc = (imgName && typeof imgName === 'string') ? '/imgs/' + imgName : '/imgs/default.png';%>
+            <img
+                src="<%= imgSrc %>"
+                alt="<%= book.title %>"
+                class="book-cover">
+
             <div class="book-info">
                 <h1><%= book.title %></h1>
                 <p class="book-price"><%= book.price %> грн</p>
             </div>
-            <% let imgName = Array.isArray(book.image) ? book.image[0] : book.image;
-            let imgSrc = (imgName && typeof imgName === 'string') ? '/imgs/' + imgName : '/imgs/default.png';%>
-            <img src="<%= imgSrc %>" alt="<%= book.title %>" class="book-cover">
         </div>
-
     </div>
 </body>
 </html>

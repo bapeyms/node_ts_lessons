@@ -1,50 +1,91 @@
-<header style="
-    background: lime;
-    color: black;
-    padding: 20px 40px;
-    border-radius: 0 0 16px 16px;
-    margin-bottom: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-">
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-    <h1 style="
+    body {
         margin: 0;
-        font-size: 1.8rem;
-        letter-spacing: 1px;
-    ">
-        BRAT LIBRARY
-    </h1>
+        background: #f4eee5;
+        color: #3f3026;
+        font-family: Arial, sans-serif;
+    }
 
-    <nav style="
+    .header {
+        background: #e4d3bc;
+        color: #3f3026;
+
+        padding: 22px 45px;
+        margin-bottom: 35px;
+
         display: flex;
-        gap: 20px;
-    ">
-        <a href="/books" style="
-            color: black;
-            text-decoration: none;
-            font-weight: bold;
-        ">
-            Books
-        </a>
+        justify-content: space-between;
+        align-items: center;
 
-        <a href="/authors" style="
-            color: black;
-            text-decoration: none;
-            font-weight: bold;
-        ">
-            Home
-        </a>
+        border-bottom: 1px solid #c7ad91;
+        box-shadow: 0 5px 18px rgba(70, 48, 30, 0.12);
+    }
 
-        <a href="/books/create" style="
-            color: black;
-            text-decoration: none;
-            font-weight: bold;
-        ">
-            Contacts
-        </a>
+    .logo {
+        margin: 0;
+
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.9rem;
+        font-weight: normal;
+        letter-spacing: 3px;
+
+        color: #3b2b21;
+    }
+
+    .nav {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .nav a {
+        position: relative;
+
+        color: #4d392c;
+        text-decoration: none;
+
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+
+        padding: 8px 0;
+
+        transition: color 0.25s ease;
+    }
+
+    .nav a::after {
+        content: "";
+
+        position: absolute;
+        left: 0;
+        bottom: 0;
+
+        width: 0;
+        height: 1px;
+
+        background: #8a6549;
+
+        transition: width 0.25s ease;
+    }
+
+    .nav a:hover {
+        color: #8a6549;
+    }
+
+    .nav a:hover::after {
+        width: 100%;
+    }
+</style>
+
+<header class="header">
+    <h1 class="logo">BRAT LIBRARY</h1>
+    <nav class="nav">
+        <a href="/books">Book Catalog</a>
+        <a href="/books/add-book">Add Book</a>
+        <a href="/">Home</a>
     </nav>
-
 </header>

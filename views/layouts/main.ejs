@@ -5,11 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/styles/bootstrap.min.css" rel="stylesheet" />
     <title><%= typeof title !== 'undefined' ? title : 'BRAT LIBRARY' %></title>
-</head>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #f4eee5;
+            color: #3f3026;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            width: 100%;
+        }
+
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 25px 20px 40px;
+        }
+
+        footer {
+            width: 100%;
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 20px 15px 30px;
+            }
+        }
+    </style>
+</head>
 <body>
-    <header> <%- include("../partials/header.ejs") %> </header>
-    <main> <%- body %> </main>
-    <footer> <%- include("../partials/footer.ejs") %> </footer>
+    <header><%- include("../partials/header.ejs") %></header>
+    <main><%- body %></main>
+    <footer><%- include("../partials/footer.ejs") %></footer>
 </body>
 </html>
