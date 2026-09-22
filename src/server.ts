@@ -21,12 +21,8 @@ const PORT = process.env.PORT || 4200;
 const HOST = process.env.HOST || "http://localhost";
 
 const app = express() // створення екземпляру express-сервера
-app.use((req, res, next) => {
-    console.log(`[REQUEST] ${req.method} ${req.url}`);
-    next();
-});
 // middleware - попередній обробник
-// app.use(loggerMiddleware);
+app.use(loggerMiddleware);
 app.use(express.json()) // читати з body json
 app.use(express.urlencoded({extended: true})); // middleware, який дозволяє серверу отримувати дані, відправлені з HTML-форм
 app.use(express.static(path.join(process.cwd(), "public"))) // підключення статичних файлів до серверу

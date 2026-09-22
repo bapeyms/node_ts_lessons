@@ -8,32 +8,18 @@ import { pool } from "../db/databaseConnection.js";
 import { getItemsBySearch } from "../utilis/getItemsBySearch.js";
 import { createResponse } from "../utilis/createResponse.js";
 import { compareBooks } from "../utilis/compareBooks.js";
-import { title } from "node:process";
+import { upload } from "../middlewares/multer.js";
 
-import multer from "multer";
+import { title } from "node:process";
 import path from "node:path";
 import fs from "node:fs/promises"
 
 export const bookRouter = Router();
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const uploadFile = path.join(process.cwd(), "public", "imgs");
-        cb(null, uploadFile);
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        const tempName = `temp_${Date.now()}${ext}`
-        cb(null, tempName);
-    }
-});
-const upload = multer({ storage });
-
-// post для форми
+// get та post для форми
 bookRouter.get("/add-book", (req: Request, res: Response) => {
     res.render("pages/book-form", { title: "Add Book" });
 });
-
 bookRouter.post("/add-book",  upload.single("image"), async (req: Request<{}, BookCreateType>, res: Response) => {
     try {
         const { title, price, year } = req.body;
