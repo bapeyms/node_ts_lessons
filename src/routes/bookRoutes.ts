@@ -12,6 +12,7 @@ import { title } from "node:process";
 
 import multer from "multer";
 import path from "node:path";
+import fs from "node:fs/promises"
 
 export const bookRouter = Router();
 
@@ -21,8 +22,9 @@ const storage = multer.diskStorage({
         cb(null, uploadFile);
     },
     filename: (req, file, cb) => {
-        const uniqueFileName = Date.now() + "_" + file.originalname;
-        cb(null, uniqueFileName);
+        const ext = path.extname(file.originalname);
+        const tempName = `temp_${Date.now()}${ext}`
+        cb(null, tempName);
     }
 });
 const upload = multer({ storage });
@@ -38,14 +40,34 @@ bookRouter.post("/add-book",  upload.single("image"), async (req: Request<{}, Bo
         const parsedPrice = Number(price) || 0;
         const parsedYear = Number(year) || new Date().getFullYear();
         const isActive = req.body.isActive === "true"; 
-        const imagePath = req.file ? req.file.filename : "";
 
-        await pool.query(
+        const result = await pool.query(
             `INSERT INTO books (title, price, publication_year, image, is_active)
-            VALUES ($1, $2, $3, $4, $5)`,
-            [title, parsedPrice, parsedYear, imagePath, isActive]
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING id`,
+            [title, parsedPrice, parsedYear, "", isActive]
         );
-        res.redirect("/books/add-book")
+
+        const newBookId = result.rows[0].id;
+
+        let finalFileName = "";
+        if (req.file) {
+            const ext = path.extname(req.file.originalname);
+            finalFileName = `pic${newBookId}${ext}`;
+
+            const oldPath = req.file.path;
+            const newPath = path.join(process.cwd(), "public", "imgs", finalFileName);
+
+            await fs.rename(oldPath, newPath);
+
+            await pool.query(
+                `UPDATE books
+                SET image = $1 WHERE id = $2`,
+                [finalFileName, newBookId]
+            );
+        }
+
+        res.redirect(`/books/${newBookId}`)
     }
     catch (error) {
         console.error("DATABASE ERROR:", error);
@@ -212,6 +234,7 @@ bookRouter.get('/:id', async (req:Request<{id: string}, ResponseType<BookType>, 
     }
 
     try {
+        const {id} = req.params;
         const result = await pool.query(
             "SELECT * FROM books WHERE id = $1",
             [id]
@@ -246,6 +269,8 @@ bookRouter.get('/:id', async (req:Request<{id: string}, ResponseType<BookType>, 
     }
     catch (error) {
         console.error("DATABASE ERROR:", error);
+        res.status(500).render("pages/error", 
+            { message: "Error fetching book details" });
 
         // json-формат
         // const response: ResponseType<BookType> = {
