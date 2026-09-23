@@ -184,6 +184,7 @@ bookRouter.post('/', (req:Request<{}, ResponseType<BookType>, BookCreateType>, r
     res.status(response.status).json(response)
 })
 
+// виделення книжки
 bookRouter.delete("/:id", async (req: Request<{id : string}>, res: Response) => {
     try {
         const {id} = req.params;
@@ -220,6 +221,74 @@ bookRouter.delete("/:id", async (req: Request<{id : string}>, res: Response) => 
         )
     }
 })
+
+// редагування
+bookRouter.put("/:id", upload.single("image"), async (req: Request<{ id: string }>, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { title, price, year } = req.body;
+
+        if (!title) {
+            return res.status(400).json(
+                { message: "Book title is empty!" });
+        }
+        
+        const parsedPrice = Number(price) || 0;
+        const parsedYear = Number(year) || new Date().getFullYear();
+        const isActive = req.body.isActive === "true" || req.body.isActive === true; 
+
+        const currentBook = await pool.query(
+            "SELECT image FROM books WHERE id = $1", 
+            [id]);
+
+        if (currentBook.rows.length === 0) {
+            return res.status(404).json(
+                { message: "Book not found" });
+        }
+
+        let imageName = currentBook.rows[0].image;
+
+        let isArrayColumn = false;
+        if (Array.isArray(imageName)) {
+            isArrayColumn = true;
+            imageName = imageName[0];
+        }
+
+        if (req.file) {
+            const ext = path.extname(req.file.originalname);
+            const finalFileName = `pic${id}${ext}`;
+            const oldTempPath = req.file.path;
+            const newPath = path.join(process.cwd(), "public", "imgs", finalFileName);
+
+            if (imageName && imageName !== finalFileName && imageName !== "default.jpg" && imageName !== "default.png") {
+                try {
+                    await fs.unlink(path.join(process.cwd(), "public", "imgs", imageName));
+                } 
+                catch (err) {
+                    console.warn("Could not remove old image file:", err);
+                }
+            }
+            await fs.copyFile(oldTempPath, newPath);
+            await fs.unlink(oldTempPath);
+            imageName = finalFileName;
+        }
+
+        const imageToSave = isArrayColumn ? [imageName] : imageName;
+        await pool.query(
+            `UPDATE books 
+             SET title = $1, price = $2, publication_year = $3, image = $4, is_active = $5
+             WHERE id = $6`,
+            [title, parsedPrice, parsedYear, imageToSave, isActive, id]
+        );
+        return res.status(200).json(
+            { message: "Book updated successfully" });
+    } 
+    catch (error) {
+        console.error("DATABASE ERROR:", error);
+        return res.status(500).json(
+            { message: "Error updating book" });
+    }
+});
 
 // одна книга за айді
 bookRouter.get('/:id', async (req:Request<{id: string}, ResponseType<BookType>, BookCreateType>,res)=>{

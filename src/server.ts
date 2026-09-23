@@ -1,15 +1,16 @@
 import express from "express"
-import { Request } from "express";
+import { Request, Response } from "express";
 
 import {bookRouter} from "./routes/bookRoutes.js"
 import { authorsRouter } from "./routes/authorsRoutes.js";
 import "dotenv/config"
-import ejs from "ejs"
 import expressEjsLayouts from "express-ejs-layouts";
+import cookieParser from "cookie-parser";
 
 import path from "node:path"
 import { fileURLToPath } from "node:url";
 import { loggerMiddleware } from "./middlewares/logger_middleware.js";
+import { authMiddleware } from "./middlewares/auth_middleware.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,7 +22,9 @@ const PORT = process.env.PORT || 4200;
 const HOST = process.env.HOST || "http://localhost";
 
 const app = express() // створення екземпляру express-сервера
-// middleware - попередній обробник
+
+app.use(cookieParser());
+app.use(authMiddleware);
 app.use(loggerMiddleware);
 app.use(express.json()) // читати з body json
 app.use(express.urlencoded({extended: true})); // middleware, який дозволяє серверу отримувати дані, відправлені з HTML-форм
@@ -32,6 +35,33 @@ app.use(expressEjsLayouts)
 app.set("views", path.join(__dirname, "..", "views")); // вказує абсолютний шлях до папки, де зберігаються всі файли із шаблонів ejs
 app.set("view engine", "ejs"); // вказується, який шаблонізатор використовується за замовчуванням
 app.set("layout", "layouts/main");
+
+// тестова робота з кукі
+app.get('/cookie', (req: Request, res:Response) => {
+    res.cookie("username", "CHICK", {
+        httpOnly: true,
+        maxAge: 2 * 60 * 1000,
+
+    });
+    res.send("Cookie created!");
+})
+app.get('/cookie-read', (req: Request, res:Response) => {
+    if (req.cookies.username && req.cookies.username) {
+        res.send(`Welcome, ${req.cookies.username}`);
+    }
+    else {
+        res.send(`Welcome, guest`)
+    }
+})
+app.get('/cookie-remove', (req: Request, res:Response) => {
+    if (req.cookies.username && req.cookies.username) {
+        res.clearCookie("username");
+        res.send(`Cookie was removed`)
+    }
+    else {
+        res.send(`Cookie was not found`)
+    }
+})
 
 app.get('/', (req:Request<null, null, null, {value: string}>, res) => {
     // за допомогою команди app.set("view engine", "ejs") express автоматично розуміє, що треба шукати файл з розширенням

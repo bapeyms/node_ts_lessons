@@ -1,3 +1,135 @@
+<style>
+    .modal-content {
+        background: #e8d8c3;
+        border: 1px solid #cdb69d;
+        border-radius: 16px;
+        box-shadow: 0 12px 35px rgba(70, 48, 30, 0.18);
+        color: #3f3026;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #cdb69d;
+        padding: 20px 24px;
+    }
+
+    .modal-title {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.45rem;
+        font-weight: normal;
+        letter-spacing: 0.5px;
+        color: #3f3026;
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #cdb69d;
+        padding: 18px 0 0;
+        margin-top: 10px;
+    }
+
+    .modal .form-label {
+        color: #4d392c;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 7px;
+    }
+
+    .modal .form-control {
+        background: #f8f3ec;
+        border: 1px solid #cdb69d;
+        border-radius: 8px;
+        color: #3f3026;
+        padding: 9px 12px;
+        box-shadow: none;
+    }
+
+    .modal .form-control:focus {
+        background: #fffaf4;
+        border-color: #a98263;
+        box-shadow: 0 0 0 3px rgba(121, 88, 63, 0.10);
+        color: #3f3026;
+    }
+
+    .modal .form-check-input {
+        background-color: #f8f3ec;
+        border: 1px solid #c7ad91;
+        box-shadow: none;
+    }
+
+    .modal .form-check-input:checked {
+        background-color: #79583f;
+        border-color: #79583f;
+    }
+
+    .modal .form-check-label {
+        color: #4d392c;
+        font-size: 0.9rem;
+    }
+
+    .modal .btn-save {
+        background: #79583f;
+        border: 1px solid #79583f;
+        border-radius: 7px;
+        padding: 8px 17px;
+        color: #fffaf4;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: 0.2s ease;
+    }
+
+    .modal .btn-save:hover {
+        background: #5f4532;
+        border-color: #5f4532;
+        color: #fffaf4;
+    }
+
+    .modal .btn-cancel {
+        background: #f4eee5;
+        border: 1px solid #c7ad91;
+        border-radius: 7px;
+        padding: 8px 17px;
+        color: #634b39;
+        font-size: 0.9rem;
+        transition: 0.2s ease;
+    }
+
+    .modal .btn-cancel:hover {
+        background: #e4d3bc;
+        border-color: #b99d80;
+        color: #4d392c;
+    }
+
+    .modal .btn-close {
+        opacity: 0.55;
+    }
+
+    .modal .btn-close:hover {
+        opacity: 0.8;
+    }
+
+    .edit-btn {
+        background: #79583f;
+        border: 1px solid #79583f;
+        border-radius: 7px;
+        padding: 7px 13px;
+        color: #fffaf4;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .edit-btn:hover {
+        background: #5f4532;
+        border-color: #5f4532;
+        color: #fffaf4;
+    }
+</style>
+
 <ul style="
     list-style: none;
     padding: 0;
@@ -21,6 +153,7 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;"
             onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 9px 20px rgba(70, 48, 30, 0.16)'"
             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 15px rgba(70, 48, 30, 0.10)'">
+            
             <div>
                 <h3 style="
                     margin: 0 0 7px 0;
@@ -39,37 +172,36 @@
                     color: #7a563d;">
                     <%= book.price %> ₴
                 </span>
-                <div style="
-                    display: flex;
-                    gap: 8px;">
-                    <a href="/books/edit/<%= book.id %>"
-                    style="
-                        background: #79583f;
-                        border: 1px solid #79583f;
-                        border-radius: 7px;
-                        padding: 7px 13px;
-                        color: #fffaf4;
-                        font-size: 0.85rem;
-                        font-weight: 500;
-                        text-decoration: none;
-                        cursor: pointer;">
-                        Редагувати
-                    </a>
+                
+                <div style="display: flex; gap: 8px;">
                     <button class="delete-btn"
-                    data-id="<%= book.id %>"
-                    style="
-                        background: #a98263;
-                        border: 1px solid #8f6b50;
-                        border-radius: 7px;
-                        padding: 7px 13px;
-                        color: #fffaf4;
-                        font-size: 0.85rem;
-                        font-weight: 500;
-                        cursor: pointer;">
+                        data-id="<%= book.id %>"
+                        style="
+                            background: #a98263;
+                            border: 1px solid #8f6b50;
+                            border-radius: 7px;
+                            padding: 7px 13px;
+                            color: #fffaf4;
+                            font-size: 0.85rem;
+                            font-weight: 500;
+                            cursor: pointer;">
                         Видалити
                     </button>
+
+                    <button type="button"
+                    class="edit-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editBookModal"
+                    data-id="<%= book.id %>"
+                    data-title="<%= book.title %>"
+                    data-price="<%= book.price %>"
+                    data-year="<%= book.publication_year %>"
+                    data-active="<%= book.is_active %>">
+                    Редагувати
+                </button>
                 </div>
             </div>
+
             <div style="
                 width: 100%;
                 height: 220px;
@@ -79,41 +211,134 @@
                 border: 1px solid #d6c1aa;">
                 <% let imgName = Array.isArray(book.image) ? book.image[0] : book.image;
                    let imgSrc = (imgName && typeof imgName === 'string') ? '/imgs/' + imgName : '/imgs/default.png'; %>
-                <img
-                    src="<%= imgSrc %>"
-                    alt="<%= book.title %>"
-                    style="
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        display: block;">
+                <img src="<%= imgSrc %>" alt="<%= book.title %>" style="width: 100%; height: 100%; object-fit: cover; display: block;">
             </div>
         </li>
     <% }) %>
 </ul>
 
+<div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="editBookModalLabel">Редагувати книгу</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="editBookForm" enctype="multipart/form-data">
+
+                    <input type="hidden" id="editBookId">
+
+                    <div class="mb-3">
+                        <label for="editTitle" class="form-label">Назва книги</label>
+                        <input type="text" class="form-control" id="editTitle" name="title" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editPrice" class="form-label">Ціна (грн)</label>
+                        <input type="number" step="0.01" class="form-control" id="editPrice" name="price" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editYear" class="form-label">Рік видання</label>
+                        <input type="number" class="form-control" id="editYear" name="year" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editImage" class="form-label">Змінити обкладинку</label>
+                        <input type="file" class="form-control" id="editImage" name="image" accept="image/*">
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="editIsActive" name="isActive" value="true">
+                        <label class="form-check-label" for="editIsActive">
+                            Активна книга
+                        </label>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
+                            Скасувати
+                        </button>
+
+                        <button type="submit" class="btn btn-save">
+                            Зберегти зміни
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    // пошук усіх кнопок видалення за класом
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', async (e) => {
             const bookId = e.target.getAttribute('data-id');
 
             if (confirm("Ви дійсно хочете видалити цю книгу?")) {
                 try {
-                    // fetch() дозволяє відправляти HTTP-запити і отримувати дані від сервера
                     const response = await fetch(`/books/${bookId}`, {
                         method: 'DELETE'
                     });
 
                     if (response.ok) {
                         window.location.href = '/books';
-                    } else {
+                    } 
+                    else {
                         alert("Не вдалося видалити книгу");
                     }
                 } catch (error) {
-                    console.error("Помилка при видаленні:", error);
+                    console.error("Delete error: ", error);
                 }
             }
         });
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const btn = e.currentTarget;
+
+            document.getElementById('editBookId').value = btn.getAttribute('data-id');
+            document.getElementById('editTitle').value = btn.getAttribute('data-title');
+            document.getElementById('editPrice').value = btn.getAttribute('data-price');
+            document.getElementById('editYear').value = btn.getAttribute('data-year');
+            
+            const isActive = btn.getAttribute('data-active') === 'true';
+            document.getElementById('editIsActive').checked = isActive;
+        });
+    });
+
+    const editForm = document.getElementById('editBookForm');
+    editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const bookId = document.getElementById('editBookId').value;
+        if (!bookId) {
+            alert("Помилка: Не вдалося отримати ID книги");
+            return;
+        }
+        const formData = new FormData(editForm);
+
+        try {
+            const response = await fetch(`/books/${bookId}`, {
+                method: 'PUT',
+                body: formData 
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } 
+            else {
+                alert("Помилка при оновленні книги");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
     });
 </script>
