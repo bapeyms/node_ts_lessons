@@ -1,19 +1,19 @@
-import express from "express"
-import { Request, Response } from "express";
-
-import {bookRouter} from "./routes/bookRoutes.js"
-import { authorsRouter } from "./routes/authorsRoutes.js";
+import express, { Request, Response } from "express"
 import "dotenv/config"
 import expressEjsLayouts from "express-ejs-layouts";
 import cookieParser from "cookie-parser";
 
 import path from "node:path"
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+import {bookRouter} from "./routes/bookRoutes.js"
+import { authorsRouter } from "./routes/authorsRoutes.js";
+import { authRouter } from "./routes/authRoutes.js";
+
 import { fileURLToPath } from "node:url";
 import { loggerMiddleware } from "./middlewares/logger_middleware.js";
 import { authMiddleware } from "./middlewares/auth_middleware.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const cl = console.log;
 
@@ -36,39 +36,20 @@ app.set("views", path.join(__dirname, "..", "views")); // вказує абсо�
 app.set("view engine", "ejs"); // вказується, який шаблонізатор використовується за замовчуванням
 app.set("layout", "layouts/main");
 
-// тестова робота з кукі
-app.get('/cookie', (req: Request, res:Response) => {
-    res.cookie("username", "CHICK", {
-        httpOnly: true,
-        maxAge: 2 * 60 * 1000,
-
-    });
-    res.send("Cookie created!");
-})
-app.get('/cookie-read', (req: Request, res:Response) => {
-    if (req.cookies.username && req.cookies.username) {
-        res.send(`Welcome, ${req.cookies.username}`);
-    }
-    else {
-        res.send(`Welcome, guest`)
-    }
-})
-app.get('/cookie-remove', (req: Request, res:Response) => {
-    if (req.cookies.username && req.cookies.username) {
-        res.clearCookie("username");
-        res.send(`Cookie was removed`)
-    }
-    else {
-        res.send(`Cookie was not found`)
-    }
-})
-
 app.get('/', (req:Request<null, null, null, {value: string}>, res) => {
     // за допомогою команди app.set("view engine", "ejs") express автоматично розуміє, що треба шукати файл з розширенням
     res.render("pages/home", {
         value: req.query.value
     });
 })
+
+app.use('/', authRouter);
+app.use('/books', bookRouter);
+app.use('/authors', authorsRouter);
+
+app.listen(PORT, () => {
+    cl(`Server ${HOST}:${PORT} has been started...`)
+});
 
 // app.get('/', (req, res) => {
 //     res.writeHead(200, {
@@ -80,10 +61,3 @@ app.get('/', (req:Request<null, null, null, {value: string}>, res) => {
 //     // для html - метод end
 //     res.end("<h1>Hello from express server!</h1>");
 // })
-
-app.use('/books', bookRouter);
-app.use('/authors', authorsRouter);
-
-app.listen(PORT, () => {
-    cl(`Server ${HOST}:${PORT} has been started...`)
-});

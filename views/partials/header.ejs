@@ -11,6 +11,7 @@
     }
 
     .header {
+        position: relative;
         background: #e4d3bc;
         color: #3f3026;
         padding: 22px 45px;
@@ -29,6 +30,31 @@
         font-weight: normal;
         letter-spacing: 3px;
         color: #3b2b21;
+        white-space: nowrap;
+    }
+
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .menu-toggle .bar {
+        width: 25px;
+        height: 3px;
+        background-color: #3b2b21;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-container {
+        display: flex;
+        align-items: center;
+        gap: 35px;
     }
 
     .nav {
@@ -66,14 +92,163 @@
     .nav a:hover::after {
         width: 100%;
     }
+
+    .user-box {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 15px;
+        color: #3b2b21;
+    }
+
+    .welcome-text {
+        font-weight: 500;
+        letter-spacing: 0.3px;
+    }
+
+    .auth-btn {
+        display: inline-block;
+        padding: 6px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: all 0.25s ease;
+        text-align: center;
+    }
+
+    .auth-btn-login {
+        background: #a98263;
+        color: #fffaf4;
+        border: 1px solid #8f6b50;
+    }
+
+    .auth-btn-login:hover {
+        background: #8a6549;
+        border-color: #725239;
+    }
+
+    .auth-btn-logout {
+        background: transparent;
+        color: #8c3a3a;
+        border: 1px solid #b85c5c;
+    }
+
+    .auth-btn-logout:hover {
+        background: #8c3a3a;
+        color: #ffffff;
+    }
+
+    @media (max-width: 992px) {
+        .header {
+            padding: 18px 25px;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+        }
+
+        .nav-container {
+            gap: 20px;
+        }
+
+        .nav {
+            gap: 18px;
+        }
+    }
+
+    @media (max-width: 800px) {
+        .header {
+            padding: 16px 20px;
+            flex-wrap: wrap;
+        }
+
+        .menu-toggle {
+            display: flex;
+        }
+
+        .nav-container {
+            display: none; 
+            width: 100%;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 20px;
+            padding-top: 20px;
+            margin-top: 15px;
+            border-top: 1px solid #c7ad91;
+        }
+
+        .nav-container.active {
+            display: flex; 
+        }
+
+        .nav {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .nav a {
+            width: 100%;
+            padding: 6px 0;
+            font-size: 16px;
+        }
+
+        .user-box {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+            padding-top: 10px;
+            border-top: 1px dashed #c7ad91;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 8px 16px;
+        }
+    }
 </style>
 
 <header class="header">
     <h1 class="logo">BRAT LIBRARY</h1>
-    <span>Welcome, <%= username %></span>
-    <nav class="nav">
-        <a href="/books">Book Catalog</a>
-        <a href="/books/add-book">Add Book</a>
-        <a href="/">Home</a>
-    </nav>
+
+    <button class="menu-toggle" id="mobile-menu-toggle" aria-label="Toggle navigation">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
+
+    <div class="nav-container" id="nav-container">
+        <nav class="nav">
+            <a href="/">Home</a>
+            <a href="/books">Book Catalog</a>
+            <a href="/books/add-book">Add Book</a>
+        </nav>
+
+        <div class="user-box">
+            <% if (username && username !== 'guest') { %>
+                <span class="welcome-text">Welcome, <strong><%= username %></strong>!</span>
+                <a href="/logout" class="auth-btn auth-btn-logout">Logout</a>
+            <% } 
+            else { %>
+                <span class="welcome-text">Welcome, <strong>Guest</strong>!</span>
+                <a href="/login" class="auth-btn auth-btn-login">Login</a>
+            <% } %>
+        </div>
+    </div>
 </header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const menuToggle = document.getElementById('mobile-menu-toggle');
+        const navContainer = document.getElementById('nav-container');
+
+        if (menuToggle && navContainer) {
+            menuToggle.addEventListener('click', () => {
+                navContainer.classList.toggle('active');
+            });
+        }
+    });
+</script>

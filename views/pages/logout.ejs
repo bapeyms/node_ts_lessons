@@ -1,0 +1,105 @@
+<style>
+    .logout-card {
+        max-width: 420px;
+        margin: 60px auto;
+        background: #e4d3bc;
+        border: 1px solid #c7ad91;
+        border-radius: 12px;
+        padding: 35px 25px;
+        text-align: center;
+        box-shadow: 0 5px 18px rgba(70, 48, 30, 0.12);
+    }
+
+    .logout-title {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.8rem;
+        color: #3b2b21;
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+
+    .logout-message {
+        font-size: 1rem;
+        color: #4d392c;
+        margin-bottom: 25px;
+        line-height: 1.5;
+    }
+
+    .redirect-text {
+        font-size: 0.9rem;
+        color: #725239;
+        margin-bottom: 25px;
+    }
+
+    .logout-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .btn-home {
+        display: inline-block;
+        padding: 8px 20px;
+        background: #a98263;
+        color: #fffaf4;
+        border: 1px solid #8f6b50;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.25s ease;
+    }
+
+    .btn-home:hover {
+        background: #8a6549;
+    }
+
+    .btn-login {
+        display: inline-block;
+        padding: 8px 20px;
+        background: transparent;
+        color: #3b2b21;
+        border: 1px solid #8f6b50;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.25s ease;
+    }
+
+    .btn-login:hover {
+        background: #d3c0a8;
+    }
+</style>
+
+<div class="logout-card">
+    <h2 class="logout-title">Ви успішно вийшли з системи</h2>
+    <p class="logout-message">
+        Дякуємо за візит до <strong>BRAT LIBRARY</strong>! Ваша сесія була безпечно завершена.
+    </p>
+
+    <p class="redirect-text">
+        Перенаправлення на головну сторінку через <strong id="countdown">15</strong> секунд...
+    </p>
+
+    <div class="logout-actions">
+        <a href="/" class="btn-home">На головну зараз</a>
+        <a href="/login" class="btn-login">Увійти знову</a>
+    </div>
+</div>
+
+<script>
+    let seconds = 15;
+    const countdownEl = document.getElementById('countdown');
+
+    const timer = setInterval(() => {
+        seconds--;
+        if (countdownEl) {
+            countdownEl.textContent = seconds.toString();
+        }
+        if (seconds <= 0) {
+            clearInterval(timer);
+            window.location.href = '/';
+        }
+    }, 1000);
+</script>
